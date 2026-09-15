@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css"> </head>
+    <link rel="stylesheet" href="anime.css"> </head>
 <body class="anime-theme"> <header class="app-header">
     <div class="container header-flex">
            <div class="logo">
@@ -228,7 +228,46 @@
     </div>
 </div>
 
+<script>
+    const audio = document.getElementById("musicaFondo");
+    const btnMusica = document.getElementById("btnMusica");
+    const sliderVolumen = document.getElementById("volumenMusica");
+    const spanTexto = btnMusica.querySelector("span");
+    const icono = btnMusica.querySelector("i");
+    
+    let sonando = false;
 
+    // Configurar el volumen inicial según la barra (está en 0.3, es decir 30%)
+    audio.volume = sliderVolumen.value;
+
+    // Detectar cuando mueves la barra de volumen
+    sliderVolumen.addEventListener("input", (evento) => {
+        audio.volume = evento.target.value;
+    });
+
+    // Intentar reproducir automáticamente
+    audio.play().then(() => {
+        sonando = true;
+        icono.className = "fas fa-pause";
+        spanTexto.innerText = "Pausar";
+    }).catch((error) => {
+        console.log("Esperando interacción del usuario para reproducir.");
+    });
+
+    // Botón Play/Pause
+    btnMusica.addEventListener("click", () => {
+        if (sonando) {
+            audio.pause();
+            icono.className = "fas fa-play";
+            spanTexto.innerText = "Reproducir";
+        } else {
+            audio.play();
+            icono.className = "fas fa-pause";
+            spanTexto.innerText = "Pausar";
+        }
+        sonando = !sonando;
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
