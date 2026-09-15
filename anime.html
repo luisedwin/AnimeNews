@@ -30,7 +30,6 @@
             <button><i class="fas fa-search"></i></button>
         </div>
     </div>
-
 </header>
 
 <section class="anime-hero animate-fade-up">
@@ -161,7 +160,7 @@
                                 </div>
                                 <h3 class="mb-3 font-heading fw-bold">Blue Period: El Arte del Despertar</h3>
                                 <p class="text-muted mb-4">Yatora Yaguchi es el estudiante de preparatoria perfecto, pero su vida se siente vacía. Al descubrir una pintura en el club de arte, su mundo cambia para siempre en una búsqueda apasionada por el arte y la autoexpresión.</p>
-                                <button class="btn-outline-primary-custom">Leer Reseña Completa</button >
+                                <button class="btn-outline-primary-custom">Leer Reseña Completa</button>
                             </div>
                         </div>
                     </div>
@@ -170,7 +169,66 @@
 
         </div>
 
-          
-</main>
+        <aside class="col-lg-4">
+            <div class="anime-widget trending-widget mb-4">
+                <h3><i class="fas fa-chart-line"></i> Popular esta Semana</h3>
+                <ul class="trending-list-dark">
+                    <li>
+                        <span class="rank">01</span>
+                        <div class="details">
+                            <h4>Spy x Family</h4>
+                            <p>Anya y Bond dominan las tendencias en redes.</p>
+                            <span class="views"><i class="fas fa-eye"></i> 1.2M Vistas</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="rank">02</span>
+                        <div class="details">
+                            <h4>Solo Leveling</h4>
+                            <p>El fenómeno del Manhwa rompe fronteras.</p>
+                            <span class="views"><i class="fas fa-eye"></i> 980K Vistas</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="rank">03</span>
+                        <div class="details">
+                            <h4>One Piece</h4>
+                            <p>Luffy alcanza el clímax de Egghead Island.</p>
+                            <span class="views"><i class="fas fa-eye"></i> 850K Vistas</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
 
+            <div class="anime-widget newsletter-widget">
+                <i class="fas fa-envelope icon-bg"></i>
+                <h3>Anime en tu buzón</h3>
+                <p>Suscríbete para recibir noticias exclusivas y estrenos de cada temporada antes que nadie.</p>
+                <input type="email" placeholder="tu@email.com" class="form-control mb-3">
+                <button class="btn-subscribe">Unirme a la Lista</button>
+            </div>
+        </aside>
+
+    </div>
+</main>
+<!-- Mini Reproductor Flotante -->
+<div class="music-player-widget">
+    <audio id="musicaFondo" loop>
+        <source src="music/music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <button id="btnMusica" class="music-toggle-btn">
+        <i class="fas fa-volume-mute"></i> <span>Activar</span>
+    </button>
+    
+    <div class="volume-control">
+        <i class="fas fa-volume-down text-white text-opacity-75" style="font-size: 0.8rem;"></i>
+        <!-- Barra de volumen (rango de 0 a 1) -->
+        <input type="range" id="volumenMusica" min="0" max="1" step="0.05" value="0.3" class="volume-slider">
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
