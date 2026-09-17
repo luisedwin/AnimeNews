@@ -73,32 +73,41 @@ AnimeNews es un mockup de portal de noticias de anime con diseño moderno, conte
 ## Gist:
 
 Luis M.: 
+
 1-https://gist.github.com/luisedwin/1dc91018ced90f4102e2158430b58535
+
 2-
 https://gist.github.com/luisedwin/a78da96fbc8731982ce7f4089e093770
 
 Angelo C.:
+
 1-
 https://gist.github.com/anngello601/0c67071f6d34009800d1aa925ea86f7c
+
 2-
 https://gist.github.com/anngello601/437d6ca5a56dae6a79e7c1e73ab30966
 
 Leonardo M.:
+
 1-
 https://gist.github.com/jleo417/f5f90ea42359e24ddb947bb44222df58
+
 2-
 https://gist.github.com/jleo417/5a257ee28b134d01e65dc67664e063e5
 
 Leandro C.:
+
 1-
 https://gist.github.com/Leandr0mar/737b57d02605cee77ee143cf93ee2215
+
 2-
 https://gist.github.com/Leandr0mar/f7fb04347c539c646e53406086a6eb85
 
 Angel M.:
-1-
-https://gist.github.com/lAngeLqI/94fea374fdeefb96900e9863ed1067c4
-2-
+
+1-https://gist.github.com/lAngeLqI/94fea374fdeefb96900e9863ed1067c4
+
+2-https://gist.github.com/lAngeLqI/98dcd3ae21f968ecd612743ec0f5ba92
 
 
 ## Página:
