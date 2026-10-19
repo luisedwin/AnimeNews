@@ -19,10 +19,4 @@ public class AnimeController {
         model.addAttribute("destacados", animeService.listarDestacados());
         return "index";
     }
-
-    @GetMapping("/animes")
-    public String catalogo(Model model) {
-        model.addAttribute("animes", animeService.listarTodos());
-        return "animes";
-    }
 }
