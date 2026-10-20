@@ -95,7 +95,7 @@
                 <div class="manga-chapter-form-grid">
                     <label>
                         Número del capítulo
-                        <input type="number" name="numero" min="0" step="1" required>
+                        <input type="number" name="numero" min="1" step="1" required>
                     </label>
                     <label>
                         Título
@@ -106,8 +106,8 @@
                         <input type="date" name="fechaPublicacion">
                     </label>
                     <label>
-                        Enlace de lectura
-                        <input type="url" name="urlLectura" placeholder="https://...">
+                        Archivo PDF (máximo 25 MB)
+                        <input type="file" name="archivoPdf" accept="application/pdf,.pdf" required>
                     </label>
                     <label class="manga-chapter-form-description">
                         Descripción
@@ -116,7 +116,9 @@
                 </div>
                 <div class="manga-chapter-form-actions">
                     <button type="submit" class="manga-chapter-read">Guardar capítulo</button>
-                    <p class="manga-chapter-form-message" role="status" aria-live="polite"></p>
+                    <p class="manga-chapter-form-message" role="status" aria-live="polite">
+                        El PDF se guardará en Supabase Storage.
+                    </p>
                 </div>
             </form>
         </details>
@@ -162,14 +164,6 @@
             const submitButton = form.querySelector('button[type="submit"]');
             const message = form.querySelector(".manga-chapter-form-message");
             const formData = new FormData(form);
-            const chapter = {
-                numero: Number(formData.get("numero")),
-                titulo: formData.get("titulo").trim(),
-                descripcion: formData.get("descripcion").trim() || null,
-                fechaPublicacion: formData.get("fechaPublicacion") || null,
-                urlLectura: formData.get("urlLectura").trim() || null
-            };
-
             submitButton.disabled = true;
             message.textContent = "Guardando capítulo...";
             message.classList.remove("is-error");
@@ -177,8 +171,7 @@
             try {
                 const response = await fetch(form.action, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(chapter)
+                    body: formData
                 });
 
                 if (!response.ok) {

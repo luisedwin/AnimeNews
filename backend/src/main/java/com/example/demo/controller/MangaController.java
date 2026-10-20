@@ -4,20 +4,26 @@ import com.example.demo.model.Manga;
 import com.example.demo.model.MangaCapitulo;
 import com.example.demo.service.MangaCapituloService;
 import com.example.demo.service.MangaService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -79,6 +85,32 @@ public class MangaController {
         Manga manga = mangaService.obtenerPorId(mangaId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Manga no encontrado"));
         MangaCapitulo capituloGuardado = capituloService.guardar(manga, capitulo);
+        return ResponseEntity.created(URI.create("/api/mangas/" + mangaId + "/capitulos"))
+                .body(capituloGuardado);
+    }
+
+    @PostMapping(value = "/api/mangas/{mangaId}/capitulos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseBody
+    public ResponseEntity<MangaCapitulo> crearCapituloConPdf(
+            @PathVariable Long mangaId,
+            @RequestParam Integer numero,
+            @RequestParam String titulo,
+            @RequestParam(required = false) String descripcion,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaPublicacion,
+            @RequestPart("archivoPdf") MultipartFile archivoPdf) {
+        if (numero < 1 || titulo.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El número y título del capítulo son obligatorios.");
+        }
+        Manga manga = mangaService.obtenerPorId(mangaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Manga no encontrado"));
+
+        MangaCapitulo capitulo = new MangaCapitulo();
+        capitulo.setNumero(numero);
+        capitulo.setTitulo(titulo);
+        capitulo.setDescripcion(descripcion);
+        capitulo.setFechaPublicacion(fechaPublicacion);
+
+        MangaCapitulo capituloGuardado = capituloService.guardarConPdf(manga, capitulo, archivoPdf);
         return ResponseEntity.created(URI.create("/api/mangas/" + mangaId + "/capitulos"))
                 .body(capituloGuardado);
     }
