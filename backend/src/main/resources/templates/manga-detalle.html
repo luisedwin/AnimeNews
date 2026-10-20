@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" th:content="${manga.descipcion}">
+    <title th:text="|${manga.titulo} - AnimeNews|">Detalle del manga - AnimeNews</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/manga.css" th:href="@{/css/manga.css}">
+</head>
+<body class="manga-theme">
+<header class="app-header">
+    <div class="container header-flex">
+        <div class="logo">
+            <h1>Anime<span>News</span></h1>
+            <p>Lo último del anime y la cultura japonesa</p>
+        </div>
+
+        <button class="mobile-nav-toggle d-lg-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mangaHeaderMenu" aria-controls="mangaHeaderMenu"
+                aria-expanded="false" aria-label="Abrir menú de navegación">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="header-menu collapse d-lg-flex" id="mangaHeaderMenu">
+            <nav class="main-nav" aria-label="Navegación principal">
+                <ul>
+                    <li><a href="index.html" th:href="@{/index.html}">Inicio</a></li>
+                    <li><a href="noticias.html" th:href="@{/noticias.html}">Noticias</a></li>
+                    <li><a href="estrenos.html" th:href="@{/estrenos.html}">Estrenos</a></li>
+                    <li><a href="anime.html" th:href="@{/anime.html}">Anime</a></li>
+                    <li><a href="manga.html" class="active" th:href="@{/manga}" aria-current="page">Manga</a></li>
+                </ul>
+            </nav>
+            <form class="search-box" role="search" method="get">
+                <input type="search" name="q" placeholder="Buscar..." aria-label="Buscar">
+                <button type="submit" aria-label="Enviar búsqueda">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<main class="container manga-detail-page">
+    <article class="manga-detail">
+        <div class="manga-detail-cover">
+            <img th:src="${manga.imageUrl}" th:alt="${manga.titulo}" fetchpriority="high">
+        </div>
+        <div class="manga-detail-content">
+            <span class="manga-badge">DETALLE DEL MANGA</span>
+            <h1 th:text="${manga.titulo}">Título del manga</h1>
+
+            <dl class="manga-detail-meta">
+                <div>
+                    <dt>Autor</dt>
+                    <dd th:text="${manga.autor != null and !#strings.isEmpty(manga.autor) ? manga.autor : 'No especificado'}">
+                        Autor
+                    </dd>
+                </div>
+                <div>
+                    <dt>Género</dt>
+                    <dd th:text="${manga.genero != null and !#strings.isEmpty(manga.genero) ? manga.genero : 'No especificado'}">
+                        Género
+                    </dd>
+                </div>
+                <div>
+                    <dt>ID</dt>
+                    <dd th:text="${manga.id}">0</dd>
+                </div>
+            </dl>
+
+            <section class="manga-detail-description">
+                <h2>Sinopsis</h2>
+                <p th:if="${manga.descipcion != null and !#strings.isEmpty(manga.descipcion)}"
+                   th:text="${manga.descipcion}">Descripción del manga.</p>
+                <p th:unless="${manga.descipcion != null and !#strings.isEmpty(manga.descipcion)}">
+                    No hay una descripción disponible para este manga.
+                </p>
+            </section>
+        </div>
+    </article>
+
+    <section class="manga-chapters" aria-labelledby="chapters-heading">
+        <details class="manga-chapter-form-panel">
+            <summary>Agregar capítulo</summary>
+            <form class="manga-chapter-form"
+                  th:action="@{/api/mangas/{mangaId}/capitulos(mangaId=${manga.id})}"
+                  method="post">
+                <div class="manga-chapter-form-grid">
+                    <label>
+                        Número del capítulo
+                        <input type="number" name="numero" min="0" step="1" required>
+                    </label>
+                    <label>
+                        Título
+                        <input type="text" name="titulo" maxlength="255" required>
+                    </label>
+                    <label>
+                        Fecha de publicación
+                        <input type="date" name="fechaPublicacion">
+                    </label>
+                    <label>
+                        Enlace de lectura
+                        <input type="url" name="urlLectura" placeholder="https://...">
+                    </label>
+                    <label class="manga-chapter-form-description">
+                        Descripción
+                        <textarea name="descripcion" rows="3" maxlength="5000"></textarea>
+                    </label>
+                </div>
+                <div class="manga-chapter-form-actions">
+                    <button type="submit" class="manga-chapter-read">Guardar capítulo</button>
+                    <p class="manga-chapter-form-message" role="status" aria-live="polite"></p>
+                </div>
+            </form>
+        </details>
+
+        <div class="manga-chapters-heading">
+            <div>
+                <span class="manga-badge">LECTURA</span>
+                <h2 id="chapters-heading">Capítulos</h2>
+            </div>
+            <span class="manga-chapter-count"
+                  th:text="|${#lists.size(capitulos)} capítulos|">0 capítulos</span>
+        </div>
+
+        <ol class="manga-chapter-list" th:if="${!#lists.isEmpty(capitulos)}">
+            <li class="manga-chapter-item" th:each="capitulo : ${capitulos}">
+                <div class="manga-chapter-number" th:text="|Capítulo ${capitulo.numero}|">Capítulo 1</div>
+                <div class="manga-chapter-info">
+                    <h3 th:text="${capitulo.titulo}">Título del capítulo</h3>
+                    <p th:if="${capitulo.descripcion != null and !#strings.isEmpty(capitulo.descripcion)}"
+                       th:text="${capitulo.descripcion}">Descripción del capítulo</p>
+                    <time th:if="${capitulo.fechaPublicacion != null}"
+                          th:datetime="${capitulo.fechaPublicacion}"
+                          th:text="${capitulo.fechaPublicacion}">2026-01-01</time>
+                </div>
+                <a class="manga-chapter-read" th:if="${capitulo.urlLectura != null and !#strings.isEmpty(capitulo.urlLectura)}"
+                   th:href="${capitulo.urlLectura}" target="_blank" rel="noopener noreferrer"
+                   aria-label="Abrir capítulo para leer">
+                    Leer <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ol>
+        <p class="manga-chapters-empty" th:if="${#lists.isEmpty(capitulos)}">
+            Todavía no hay capítulos registrados para este manga.
+        </p>
+    </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll(".manga-chapter-form").forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const submitButton = form.querySelector('button[type="submit"]');
+            const message = form.querySelector(".manga-chapter-form-message");
+            const formData = new FormData(form);
+            const chapter = {
+                numero: Number(formData.get("numero")),
+                titulo: formData.get("titulo").trim(),
+                descripcion: formData.get("descripcion").trim() || null,
+                fechaPublicacion: formData.get("fechaPublicacion") || null,
+                urlLectura: formData.get("urlLectura").trim() || null
+            };
+
+            submitButton.disabled = true;
+            message.textContent = "Guardando capítulo...";
+            message.classList.remove("is-error");
+
+            try {
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(chapter)
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error || `Error ${response.status} al guardar el capítulo.`);
+                }
+
+                window.location.reload();
+            } catch (error) {
+                message.textContent = error.message || "No se pudo guardar el capítulo.";
+                message.classList.add("is-error");
+                submitButton.disabled = false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

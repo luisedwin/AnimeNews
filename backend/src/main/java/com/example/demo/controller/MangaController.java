@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Manga;
+import com.example.demo.model.MangaCapitulo;
+import com.example.demo.service.MangaCapituloService;
 import com.example.demo.service.MangaService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +24,11 @@ import java.util.List;
 public class MangaController {
 
     private final MangaService mangaService;
+    private final MangaCapituloService capituloService;
 
-    public MangaController(MangaService mangaService) {
+    public MangaController(MangaService mangaService, MangaCapituloService capituloService) {
         this.mangaService = mangaService;
+        this.capituloService = capituloService;
     }
 
     @GetMapping("/manga")
@@ -31,6 +37,15 @@ public class MangaController {
         model.addAttribute("mangas", mangas);
         model.addAttribute("mangaDestacado", mangaService.obtenerAleatorio(mangas).orElse(null));
         return "manga";
+    }
+
+    @GetMapping("/manga/{id}")
+    public String mostrarDetalleManga(@PathVariable Long id, Model model) {
+        Manga manga = mangaService.obtenerPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Manga no encontrado"));
+        model.addAttribute("manga", manga);
+        model.addAttribute("capitulos", capituloService.obtenerPorManga(id));
+        return "manga-detalle";
     }
 
     @GetMapping("/api/mangas")
@@ -45,6 +60,27 @@ public class MangaController {
         return mangaService.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/api/mangas/{mangaId}/capitulos")
+    @ResponseBody
+    public ResponseEntity<List<MangaCapitulo>> obtenerCapitulos(@PathVariable Long mangaId) {
+        if (mangaService.obtenerPorId(mangaId).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(capituloService.obtenerPorManga(mangaId));
+    }
+
+    @PostMapping("/api/mangas/{mangaId}/capitulos")
+    @ResponseBody
+    public ResponseEntity<MangaCapitulo> crearCapitulo(
+            @PathVariable Long mangaId,
+            @RequestBody MangaCapitulo capitulo) {
+        Manga manga = mangaService.obtenerPorId(mangaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Manga no encontrado"));
+        MangaCapitulo capituloGuardado = capituloService.guardar(manga, capitulo);
+        return ResponseEntity.created(URI.create("/api/mangas/" + mangaId + "/capitulos"))
+                .body(capituloGuardado);
     }
 
     @PostMapping("/api/mangas")

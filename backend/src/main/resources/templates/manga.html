@@ -127,18 +127,20 @@
 
                 <div class="row g-4">
                     <div class="col-6 col-sm-4 col-lg-3" th:each="manga : ${mangas}">
-                        <article class="manga-card">
-                            <div class="card-img-wrapper">
-                                <img th:src="${manga.imageUrl}" th:alt="${manga.titulo}" loading="lazy" decoding="async">
-                            </div>
-                            <div class="card-body">
-                                <h3 th:text="${manga.titulo}">Título del manga</h3>
-                                <p class="author" th:text="${manga.autor}">Autor</p>
-                                <div class="tags">
-                                    <span th:text="${manga.genero}">Género</span>
+                        <a class="manga-card-link" th:href="@{/manga/{id}(id=${manga.id})}">
+                            <article class="manga-card">
+                                <div class="card-img-wrapper">
+                                    <img th:src="${manga.imageUrl}" th:alt="${manga.titulo}" loading="lazy" decoding="async">
                                 </div>
-                            </div>
-                        </article>
+                                <div class="card-body">
+                                    <h3 th:text="${manga.titulo}">Título del manga</h3>
+                                    <p class="author" th:text="${manga.autor}">Autor</p>
+                                    <div class="tags">
+                                        <span th:text="${manga.genero}">Género</span>
+                                    </div>
+                                </div>
+                            </article>
+                        </a>
                     </div>
                     <p class="col-12" th:if="${#lists.isEmpty(mangas)}">Todavía no hay mangas para mostrar.</p>
 
