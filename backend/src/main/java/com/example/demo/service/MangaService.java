@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class MangaService {
@@ -18,6 +19,15 @@ public class MangaService {
 
     public List<Manga> obtenerTodos() {
         return mangaRepository.findAll();
+    }
+
+    public Optional<Manga> obtenerAleatorio(List<Manga> mangas) {
+        if (mangas.isEmpty()) {
+            return Optional.empty();
+        }
+
+        int indice = ThreadLocalRandom.current().nextInt(mangas.size());
+        return Optional.of(mangas.get(indice));
     }
 
     public Optional<Manga> obtenerPorId(Long id) {

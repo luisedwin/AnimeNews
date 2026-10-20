@@ -91,9 +91,24 @@
             <div class="col-lg-9">
 
                 <!-- HERO DESTACADO -->
-                <div class="manga-hero mb-5">
+                <div class="manga-hero mb-5" th:if="${mangaDestacado != null}">
                     <div class="hero-bg"
-                        style="background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323303.jpeg');">
+                        th:style="|background-image: url('${mangaDestacado.imageUrl}')|">
+                    </div>
+                    <div class="hero-content">
+                        <span class="manga-badge mb-3">DESTACADO</span>
+                        <h1 th:text="${mangaDestacado.titulo}">Título del manga</h1>
+                        <p th:if="${mangaDestacado.descipcion != null and !#strings.isEmpty(mangaDestacado.descipcion)}"
+                           th:text="${mangaDestacado.descipcion}">Descripción del manga</p>
+                        <p class="author" th:text="${mangaDestacado.autor}">Autor</p>
+                        <div class="hero-buttons mt-4">
+                            <span class="manga-badge" th:text="${mangaDestacado.genero}">Género</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="manga-hero mb-5" th:unless="${mangaDestacado != null}">
+                    <div class="hero-bg"
+                         style="background-image: url('https://images8.alphacoders.com/132/thumb-1920-1323303.jpeg');">
                     </div>
                     <div class="hero-content">
                         <span class="manga-badge mb-3">DESTACADO</span>
@@ -101,12 +116,7 @@
                         <p>El destino de la Sociedad de Almas pende de un hilo. Tras siglos de silencio, el Emperador
                             Quincy, Yhwach, ha despertado para reclamar su venganza. Con un ejército imparable conocido
                             como el Wandenreich, los Quincy desatan un ataque sorpresa devastador que amenaza con
-                            destruir el equilibrio del universo entero.
-                        </p>
-                        <div class="hero-buttons mt-4">
-                            <button class="btn-primary-solid"><i class="fas fa-play me-2"></i> Leer Ahora</button>
-                            <button class="btn-dark-solid">Más Información</button>
-                        </div>
+                            destruir el equilibrio del universo entero.</p>
                     </div>
                 </div>
 

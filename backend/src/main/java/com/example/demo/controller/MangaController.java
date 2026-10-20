@@ -27,7 +27,9 @@ public class MangaController {
 
     @GetMapping("/manga")
     public String mostrarMangas(Model model) {
-        model.addAttribute("mangas", mangaService.obtenerTodos());
+        List<Manga> mangas = mangaService.obtenerTodos();
+        model.addAttribute("mangas", mangas);
+        model.addAttribute("mangaDestacado", mangaService.obtenerAleatorio(mangas).orElse(null));
         return "manga";
     }
 
