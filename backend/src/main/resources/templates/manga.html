@@ -27,18 +27,28 @@
                 <p>Lo último del anime y la cultura japonesa</p>
             </div>
 
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="index.html" th:href="@{/index.html}">Inicio</a></li>
-                    <li><a href="noticias.html" th:href="@{/noticias.html}">Noticias</a></li>
-                    <li><a href="estrenos.html" th:href="@{/estrenos.html}">Estrenos</a></li>
-                    <li><a href="anime.html" class="active" th:href="@{/anime.html}">Anime</a></li>
-                    <li><a href="manga.html" th:href="@{/manga.html}">Manga</a></li>
-                </ul>
-            </nav>
-            <div class="search-box">
-                <input type="text" placeholder="Buscar...">
-                <button><i class="fas fa-search"></i></button>
+            <button class="mobile-nav-toggle d-lg-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#mangaHeaderMenu" aria-controls="mangaHeaderMenu"
+                    aria-expanded="false" aria-label="Abrir menú de navegación">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="header-menu collapse d-lg-flex" id="mangaHeaderMenu">
+                <nav class="main-nav" aria-label="Navegación principal">
+                    <ul>
+                        <li><a href="index.html" th:href="@{/index.html}">Inicio</a></li>
+                        <li><a href="noticias.html" th:href="@{/noticias.html}">Noticias</a></li>
+                        <li><a href="estrenos.html" th:href="@{/estrenos.html}">Estrenos</a></li>
+                        <li><a href="anime.html" th:href="@{/anime.html}">Anime</a></li>
+                        <li><a href="manga.html" class="active" th:href="@{/manga}" aria-current="page">Manga</a></li>
+                    </ul>
+                </nav>
+                <form class="search-box" role="search" method="get">
+                    <input type="search" name="q" placeholder="Buscar..." aria-label="Buscar">
+                    <button type="submit" aria-label="Enviar búsqueda"><i class="fas fa-search" aria-hidden="true"></i></button>
+                </form>
             </div>
         </div>
     </header>
@@ -106,117 +116,21 @@
                 </div>
 
                 <div class="row g-4">
-                    <!-- Card 1 -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="manga-card">
+                    <div class="col-6 col-sm-4 col-lg-3" th:each="manga : ${mangas}">
+                        <article class="manga-card">
                             <div class="card-img-wrapper">
-                                <img src="https://www.sdpnoticias.com/resizer/v2/LOH4EEAKRFH4LK3X3DUJURQ3V4.jpeg?smart=true&auth=e5f5e13cb8f0244c20bdd3c8cbac9f2897ba5709286b9227067189815980602b&width=1200&height=675"
-                                    alt="Jujutsu Kaisen">
-                                <span class="badge-hot">HOT</span>
+                                <img th:src="${manga.imageUrl}" th:alt="${manga.titulo}" loading="lazy" decoding="async">
                             </div>
                             <div class="card-body">
-                                <h3>Jujutsu Kaisen</h3>
-                                <p class="author">Gege Akutami</p>
+                                <h3 th:text="${manga.titulo}">Título del manga</h3>
+                                <p class="author" th:text="${manga.autor}">Autor</p>
                                 <div class="tags">
-                                    <span>Shonen</span>
-                                    <span>Acción</span>
+                                    <span th:text="${manga.genero}">Género</span>
                                 </div>
                             </div>
-                        </div>
+                        </article>
                     </div>
-
-                    <!-- Card 2 -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="manga-card">
-                            <div class="card-img-wrapper">
-                                <img src="https://motionbgs.com/media/2885/my-hero-academia.jpg" alt="My Hero Academia">
-                                <span class="badge-new">NUEVO</span>
-                            </div>
-                            <div class="card-body">
-                                <h3>My Hero Academia</h3>
-                                <p class="author">Kohei Horikoshi</p>
-                                <div class="tags">
-                                    <span>Shonen</span>
-                                    <span>Superhéroes</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="manga-card">
-                            <div class="card-img-wrapper">
-                                <img src="https://comicbook.com/wp-content/uploads/sites/4/2025/07/Chainsaw-Man-The-Movie-Reze-Arc.jpg?resize=2000"
-                                    alt="Chainsaw Man">
-                            </div>
-                            <div class="card-body">
-                                <h3>Chainsaw Man</h3>
-                                <p class="author">Tatsuki Fujimoto</p>
-                                <div class="tags">
-                                    <span>Shonen</span>
-                                    <span>Gore</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 4 -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="manga-card">
-                            <div class="card-img-wrapper">
-                                <img src="https://a.storyblok.com/f/178900/937x1320/73cfb2f15f/the-villager-of-level-999-main-visual.jpg/m/filters:quality(95)format(webp)"
-                                    alt="The Villager of Level 999">
-                            </div>
-                            <div class="card-body">
-                                <h3>The Villager of Level 999</h3>
-                                <p class="author">Koneko Hoshitsuki</p>
-                                <div class="tags">
-                                    <span>Aventura</span>
-                                    <span>Fantasia</span>
-                                    <span>Comedia</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Card 5 -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="manga-card">
-                            <div class="card-img-wrapper">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk1iwJJ-lprKxGiT7LqxR7lFKLfWvCkj922-w8xKWazMPmmK8Vh6H1Q2xC&s=10"
-                                    alt="Mushoku Tensei: Isekai Ittara Honki Dasu">
-                            </div>
-                            <div class="card-body">
-                                <h3>Mushoku Tensei: Isekai Ittara Honki Dasu</h3>
-                                <p class="author">Rifujin na Magonote</p>
-                                <div class="tags">
-                                    <span>Aventura</span>
-                                    <span>Fantasia</span>
-                                    <span>Comedia</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Card 6 -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="manga-card">
-                            <div class="card-img-wrapper">
-                                <img src="https://a.storyblok.com/f/178900/1460x2063/2cbf852da2/sword_art_online_the_movie_integral_domain_teaser_art.jpg/m/filters:quality(95)format(webp)"
-                                    alt="Sword Art Online">
-                            </div>
-                            <div class="card-body">
-                                <h3>Sword Art Online</h3>
-                                <p class="author">
-                                    Reki Kawahara</p>
-                                <div class="tags">
-                                    <span>Aventura</span>
-                                    <span>Fantasia</span>
-                                    <span>Romance</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <p class="col-12" th:if="${#lists.isEmpty(mangas)}">Todavía no hay mangas para mostrar.</p>
 
                 </div>
 
