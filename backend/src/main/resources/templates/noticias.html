@@ -7,7 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../../../css/main.css"> </head>
+    <link rel="stylesheet" th:href="@{/css/main.css}" href="/css/main.css">
+</head>
 <body class="noticias-theme">
 
 <header class="app-header">
@@ -38,105 +39,26 @@
         
         <div class="col-lg-8">
             
-            <div class="news-hero-card mb-4">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHto3wq9-XFGLaDEwzz2HV4fUZVngRd42SbScezCaGCi6zLJpWs2dFk8c&s=10" alt="estrenos 2026">
+            <div class="news-hero-card mb-4" id="noticia-destacada" hidden>
+                <img id="destacada-imagen" src="" alt="">
                 <div class="card-overlay"></div>
                 <div class="card-content">
                     <span class="news-badge">DESTACADO</span>
-                    <h2>Temporada de Invierno 2026: Los estrenos más esperados</h2>
-                    <p>Una mirada exhaustiva a los títulos que dominarán la conversación esta temporada. Desde retornos triunfales hasta nuevas adaptaciones que prometen...</p>
-                    <button class="btn-news-primary">Leer Artículo <i class="fas fa-arrow-right ms-2"></i></button>
+                    <h2 id="destacada-titulo"></h2>
+                    <p id="destacada-resumen"></p>
+                    <a class="btn-news-primary" id="destacada-leer">Leer Artículo <i class="fas fa-arrow-right ms-2"></i></a>
                 </div>
             </div>
 
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="news-standard-card">
-                        <div class="img-wrapper">
-                            <img src="https://los40.com/resizer/v2/CESCLPH2QVAINIMEUIDPRWA67Y.jpg?auth=ef3461bda2ac453ef2cd4da2735f0505a3d644d4d5a50cfa682e984d746ff8bb&quality=70&width=1200&height=675&focal=745,204" alt="solo leveling">
-                        </div>
-                        <div class="content">
-                            <span class="category">AVANCE</span>
-                            <h3>Nuevo tráiler de Solo Leveling enciende las redes</h3>
-                            <p>La esperada adaptación muestra nuevas secuencias de combate que elevan las expectativas de los fans.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="news-standard-card">
-                        <div class="img-wrapper">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5tj89NO6rOObXjCwHSpe3GHfNCoKaoyCru1citNJSbuNbtjl7M7pO7i0V&s=10" alt="Oshi no Ko">
-                        </div>
-                        <div class="content">
-                            <span class="category">CONFIRMACIÓN</span>
-                            <h3>Anuncio oficial de la segunda temporada para Oshi no Ko</h3>
-                            <p>El fenómeno de la industria del entretenimiento asegura su continuación tras un final de temporada...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="news-standard-card">
-                        <div class="img-wrapper">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTO_J5303QYG1Yj9Pp8OoGCL4RYt1ULtBh06ZBQ6RyNrRaZKMGJdef9mA8&s=10" alt="MAPPA">
-                        </div>
-                        <div class="content">
-                            <span class="category">INDUSTRIA</span>
-                            <h3>MAPPA revela nuevos proyectos para el próximo año fiscal</h3>
-                            <p>El estudio de animación detalla su hoja de ruta con tres nuevas producciones originales.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="news-standard-card">
-                        <div class="img-wrapper">
-                            <img src="https://i.blogs.es/9d749e/frieren/500_333.jpeg" alt="Frieren">
-                        </div>
-                        <div class="content">
-                            <span class="category">RESEÑA</span>
-                            <h3>Frieren: Más allá del final del viaje - Episodio 12</h3>
-                            <p>Análisis profundo del emotivo desarrollo de personajes en la aclamada serie de fantasía.</p>
-                        </div>
-                    </div>
-                </div>
-            </div> </div>
+            <p id="estado-noticias" class="text-muted" role="status">Cargando noticias...</p>
+            <div class="row g-4" id="lista-noticias"></div>
+        </div>
 
         <aside class="col-lg-4">
             
             <div class="news-sidebar-widget mb-4">
                 <h3 class="widget-title"><i class="fas fa-chart-line text-primary me-2"></i> Lo más leído</h3>
-                <ul class="most-read-list">
-                    <li>
-                        <span class="number">01</span>
-                        <div class="info">
-                            <h4><a href="#">Exclusiva: Entrevista con el creador de Jujutsu Kaisen</a></h4>
-                            <span class="time">Hace 2 horas</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="number">02</span>
-                        <div class="info">
-                            <h4><a href="#">Top 10 Animes de Acción de la Década</a></h4>
-                            <span class="time">Hace 5 horas</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="number">03</span>
-                        <div class="info">
-                            <h4><a href="#">Rumor: Posible remake de Tokyo Ghoul en desarrollo</a></h4>
-                            <span class="time">Ayer</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="number">04</span>
-                        <div class="info">
-                            <h4><a href="#">Ventas de Manga en Japón: Shueisha domina el primer trimestre</a></h4>
-                            <span class="time">Ayer</span>
-                        </div>
-                    </li>
-                </ul>
+                <ul class="most-read-list" id="noticias-destacadas-lista"></ul>
             </div>
 
             <div class="news-sidebar-widget newsletter-box text-center">
@@ -169,6 +91,116 @@
     </div>
 </footer>
 
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const API_NOTICIAS = '/api/noticias';
+    const listaNoticias = document.getElementById('lista-noticias');
+    const estadoNoticias = document.getElementById('estado-noticias');
+
+    function textoSeguro(valor, alternativo = '') {
+        return valor == null || valor === '' ? alternativo : String(valor);
+    }
+
+    function crearTarjeta(noticia) {
+        const columna = document.createElement('div');
+        columna.className = 'col-md-6';
+
+        const tarjeta = document.createElement('article');
+        tarjeta.className = 'news-standard-card';
+
+        if (noticia.imagenUrl) {
+            const wrapperImagen = document.createElement('div');
+            wrapperImagen.className = 'img-wrapper';
+            const imagen = document.createElement('img');
+            imagen.src = noticia.imagenUrl;
+            imagen.alt = textoSeguro(noticia.titulo, 'Imagen de noticia');
+            imagen.loading = 'lazy';
+            wrapperImagen.appendChild(imagen);
+            tarjeta.appendChild(wrapperImagen);
+        }
+
+        const contenido = document.createElement('div');
+        contenido.className = 'content';
+        const categoria = document.createElement('span');
+        categoria.className = 'category';
+        categoria.textContent = textoSeguro(noticia.categoria, 'ANIME');
+        const titulo = document.createElement('h3');
+        titulo.textContent = textoSeguro(noticia.titulo, 'Noticia sin título');
+        const resumen = document.createElement('p');
+        resumen.textContent = textoSeguro(noticia.resumen);
+
+        contenido.append(categoria, titulo, resumen);
+        tarjeta.appendChild(contenido);
+        const enlaceTarjeta = document.createElement('a');
+        enlaceTarjeta.href = `/detalle-noticias/${encodeURIComponent(noticia.id)}`;
+        enlaceTarjeta.className = 'noticia-card-link';
+        enlaceTarjeta.setAttribute('aria-label', `Leer noticia: ${textoSeguro(noticia.titulo)}`);
+        while (tarjeta.firstChild) enlaceTarjeta.appendChild(tarjeta.firstChild);
+        tarjeta.appendChild(enlaceTarjeta);
+        columna.appendChild(tarjeta);
+        return columna;
+    }
+
+    function mostrarDestacada(noticia) {
+        const contenedor = document.getElementById('noticia-destacada');
+        const imagen = document.getElementById('destacada-imagen');
+        if (noticia.imagenUrl) {
+            imagen.src = noticia.imagenUrl;
+            imagen.alt = textoSeguro(noticia.titulo, 'Imagen de noticia destacada');
+        } else {
+            imagen.remove();
+        }
+        document.getElementById('destacada-titulo').textContent = textoSeguro(noticia.titulo);
+        document.getElementById('destacada-resumen').textContent = textoSeguro(noticia.resumen);
+        document.getElementById('destacada-leer').href = `/detalle-noticias/${encodeURIComponent(noticia.id)}`;
+        contenedor.hidden = false;
+    }
+
+    async function cargarNoticias() {
+        try {
+            const respuesta = await fetch(API_NOTICIAS, { headers: { Accept: 'application/json' } });
+            if (!respuesta.ok) throw new Error(`Error HTTP ${respuesta.status}`);
+
+            const noticias = await respuesta.json();
+            if (!Array.isArray(noticias)) throw new Error('La respuesta de noticias no tiene el formato esperado.');
+
+            const destacada = noticias.find(noticia => noticia.destacada);
+            if (destacada) mostrarDestacada(destacada);
+
+            const restantes = noticias.filter(noticia => !destacada || noticia.id !== destacada.id);
+            listaNoticias.replaceChildren(...restantes.map(crearTarjeta));
+
+            const listaTop = document.getElementById('noticias-destacadas-lista');
+            listaTop.replaceChildren(...noticias.slice(0, 4).map((noticia, indice) => {
+                const item = document.createElement('li');
+                const numero = document.createElement('span');
+                numero.className = 'number';
+                numero.textContent = String(indice + 1).padStart(2, '0');
+                const info = document.createElement('div');
+                info.className = 'info';
+                const titulo = document.createElement('h4');
+                const enlace = document.createElement('a');
+                enlace.href = `/detalle-noticias/${encodeURIComponent(noticia.id)}`;
+                enlace.textContent = textoSeguro(noticia.titulo, 'Noticia sin título');
+                titulo.appendChild(enlace);
+                info.appendChild(titulo);
+                item.append(numero, info);
+                return item;
+            }));
+
+            estadoNoticias.textContent = noticias.length ? '' : 'Todavía no hay noticias publicadas.';
+            estadoNoticias.hidden = noticias.length > 0;
+        } catch (error) {
+            console.error('No se pudieron cargar las noticias:', error);
+            estadoNoticias.textContent = 'No se pudieron cargar las noticias. Intenta nuevamente más tarde.';
+        }
+    }
+
+    cargarNoticias();
+</script>
+
+
 </body>
 </html>
