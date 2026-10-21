@@ -37,6 +37,7 @@ public class NoticiasService {
         return noticiasRepository.save(noticia);
     }
 
+    /*Metodo para actualizar noticia */
     public Noticias actualizar(Long id, Noticias datos) {
         Noticias noticia = obtenerPorId(id);
         noticia.setTitulo(datos.getTitulo());
