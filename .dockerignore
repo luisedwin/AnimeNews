@@ -1,0 +1,8 @@
+**/target/
+**/.git/
+**/.idea/
+**/.vscode/
+**/.DS_Store
+**/node_modules/
+Dockerfile
+!.mvn/wrapper/maven-wrapper.jar
