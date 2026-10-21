@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor  
 @Entity
-
+/* Modelo para representar una noticia */
 @Table(name = "noticias")
 public class Noticias {
 
