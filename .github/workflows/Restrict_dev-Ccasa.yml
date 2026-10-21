@@ -1,0 +1,20 @@
+name: Restrict dev-Ccasa
+
+on:
+  push:
+    branches:
+      - dev-Ccasa
+
+jobs:
+  validate-user:
+    if: github.actor == 'anngello601'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validar que solo mi usuario ejecuta el workflow
+        run: |
+          echo "Usuario autenticado: ${{ github.actor }}"
+          echo "Rama: ${{ github.ref_name }}"
