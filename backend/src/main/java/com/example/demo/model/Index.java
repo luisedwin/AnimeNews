@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "animes")
-public class Anime {
+public class Index {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +26,9 @@ public class Anime {
 
     private Double rating;
 
-    public Anime() {}
+    public Index() {}
 
-    public Anime(String titulo, String descripcion, String genero, String imagenUrl, String videoUrl, Double rating) {
+    public Index(String titulo, String descripcion, String genero, String imagenUrl, String videoUrl, Double rating) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.genero = genero;
