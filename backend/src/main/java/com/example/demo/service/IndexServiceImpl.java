@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Index;
+import com.example.demo.model.Anime;
 import com.example.demo.repository.IndexRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +17,22 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public List<Index> listarTodos() {
+    public List<Anime> listarTodos() {
         return indexRepository.findAll();
     }
 
     @Override
-    public List<Index> listarDestacados() {
+    public List<Anime> listarDestacados() {
         return indexRepository.findTop5ByOrderByRatingDesc();
     }
 
     @Override
-    public Optional<Index> obtenerPorId(Long id) {
+    public Optional<Anime> obtenerPorId(Long id) {
         return indexRepository.findById(id);
     }
 
     @Override
-    public Index guardar(Index index) {
+    public Anime guardar(Anime index) {
         return indexRepository.save(index);
     }
 }
