@@ -69,15 +69,22 @@ public class SupabaseStorageService {
                 .header("apikey", serviceRoleKey)
                 .header("Content-Type", "application/pdf")
                 .header("x-upsert", "false")
-                .PUT(HttpRequest.BodyPublishers.ofByteArray(contenido))
+                .POST(HttpRequest.BodyPublishers.ofByteArray(contenido))
                 .build();
 
         try {
-            HttpResponse<Void> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.discarding());
+            HttpResponse<String> response = HTTP_CLIENT.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                String detalle = response.body() == null ? "" : response.body().replaceAll("\\s+", " ").trim();
+                if (detalle.length() > 300) {
+                    detalle = detalle.substring(0, 300);
+                }
                 throw new ResponseStatusException(
                         HttpStatus.BAD_GATEWAY,
-                        "Supabase Storage rechazó el PDF (HTTP " + response.statusCode() + ").");
+                        "Supabase Storage rechazó el PDF (HTTP " + response.statusCode() + ")"
+                                + (detalle.isBlank() ? "." : ": " + detalle));
             }
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
