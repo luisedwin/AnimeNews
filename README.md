@@ -2,6 +2,15 @@
 
 AnimeNews es un sitio web estático de noticias sobre anime, manga, estrenos y cultura japonesa. La idea principal del proyecto es simular la experiencia de un portal de entretenimiento moderno, con una interfaz visualmente llamativa, diseño responsivo y secciones especializadas para cada tipo de contenido.
 
+##Novedades
+
+-Se Migro el proyecto al Springboot, donde las paginsa se manejaran en la parte de resources
+-Se integro Supabase, una base de datos en la nube.
+-Los datos de la pagina se trasladaron a la base de datos y fueron inyectados a la pagina por sus respectivos enpoints.
+-Cada integrante configuro un workflow para el control de calidad de su rama respectiva.
+-Se creo un entorno de prueba con docker
+
+
 ## ¿En qué consiste la página?
 
 La web está orientada a ser una landing page y un portal informativo para fans del anime. Presenta:
