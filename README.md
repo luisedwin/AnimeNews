@@ -4,11 +4,11 @@ AnimeNews es un sitio web estático de noticias sobre anime, manga, estrenos y c
 
 ## Novedades
 
--Se Migro el proyecto al Springboot, donde las paginsa se manejaran en la parte de resources
--Se integro Supabase, una base de datos en la nube.
--Los datos de la pagina se trasladaron a la base de datos y fueron inyectados a la pagina por sus respectivos enpoints.
--Cada integrante configuro un workflow para el control de calidad de su rama respectiva.
--Se creo un entorno de prueba con docker
+- Se Migro el proyecto al Springboot, donde las paginsa se manejaran en la parte de resources
+- Se integro Supabase, una base de datos en la nube.
+- Los datos de la pagina se trasladaron a la base de datos y fueron inyectados a la pagina por sus respectivos enpoints.
+- Cada integrante configuro un workflow para el control de calidad de su rama respectiva.
+- Se creo un entorno de prueba con docker
 
 
 ## ¿En qué consiste la página?
