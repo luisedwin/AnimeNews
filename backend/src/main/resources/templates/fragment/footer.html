@@ -1,9 +1,12 @@
 <footer class="app-footer" th:fragment="footer">
     <div class="container text-center">
         <p>© 2026 AnimeNews. Lo último del anime y la cultura japonesa.</p>
-        <p class="mt-2">
-            <a href="#">Política de privacidad</a> |
-            <a href="#">Contacto</a>
-        </p>
+        <nav class="mt-2" aria-label="Navegación del pie de página">
+            <a th:href="@{/}">Inicio</a> |
+            <a th:href="@{/noticias}">Noticias</a> |
+            <a th:href="@{/estrenos}">Estrenos</a> |
+            <a th:href="@{/anime}">Anime</a> |
+            <a th:href="@{/manga}">Manga</a>
+        </nav>
     </div>
 </footer>

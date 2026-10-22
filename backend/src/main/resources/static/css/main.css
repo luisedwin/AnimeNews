@@ -1297,6 +1297,10 @@ body {
     flex-direction: column;
     text-align: center;
   }
+
+  .app-header .header-menu {
+    justify-content: center;
+  }
 }
 
 .app-header .logo h1 {
@@ -1315,6 +1319,13 @@ body {
   font-size: 0.8rem;
   opacity: 0.8;
   margin-bottom: 0;
+}
+
+.app-header .header-menu {
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .app-header .main-nav ul {
@@ -1340,7 +1351,8 @@ body {
   transition: color 0.2s;
 }
 
-.app-header .main-nav ul a:hover {
+.app-header .main-nav ul a:hover,
+.app-header .main-nav ul a.active {
   color: #ff6b81;
 }
 

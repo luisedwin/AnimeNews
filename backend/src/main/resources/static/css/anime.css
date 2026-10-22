@@ -34,6 +34,7 @@ body {
 }
 
 .header-flex { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.header-menu { align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 20px; }
 .logo h1 { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; margin: 0; letter-spacing: -1px; }
 .logo h1 span { color: var(--anime-primary); text-shadow: 0 0 15px rgba(230,25,53,0.4); }
 
@@ -233,6 +234,9 @@ body {
 }
 .music-toggle-btn:hover { background: var(--anime-primary-hover); transform: scale(1.05); }
 .volume-slider { width: 80px; accent-color: var(--anime-primary); cursor: pointer; }
+.app-footer { background: #111; color: var(--anime-text-muted); padding: 25px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+.app-footer a { color: #ff6680; text-decoration: none; }
+.app-footer a:hover { color: white; }
 
 /* =========================================================
    RESPONSIVE
@@ -244,6 +248,7 @@ body {
 
 @media (max-width: 768px) {
     .header-flex { flex-direction: column; gap: 15px; }
+    .header-menu { justify-content: center; }
     .main-nav ul { flex-wrap: wrap; justify-content: center; gap: 15px; }
     .hero-content h1 { font-size: 2.2rem; }
     .crunchy-card { width: 220px; } /* Ajuste para móviles */

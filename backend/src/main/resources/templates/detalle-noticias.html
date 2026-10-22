@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,23 +57,7 @@
     </style>
 </head>
 <body class="noticias-theme">
-<header class="app-header">
-    <div class="container header-flex">
-        <div class="logo">
-            <h1>Anime<span>News</span></h1>
-            <p>Lo último del anime y la cultura japonesa</p>
-        </div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/noticias" class="active">Noticias</a></li>
-                <li><a href="/estrenos.html">Estrenos</a></li>
-                <li><a href="/anime.html">Anime</a></li>
-                <li><a href="/manga.html">Manga</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
+<header th:replace="~{fragment/navBar :: navBar('news')}"></header>
 
 <main class="container my-5 animate-fade-up">
     <a class="detalle-volver d-inline-block mb-4" href="/noticias"><i class="fas fa-arrow-left me-2"></i>Volver a noticias</a>
@@ -101,11 +85,7 @@
     </article>
 </main>
 
-<footer class="app-footer text-center py-4 border-top border-secondary mt-5" style="background-color: #0d0d0f;">
-    <div class="container">
-        <p class="text-muted small mb-0">© 2026 AnimeNews. Lo último del anime y la cultura japonesa.</p>
-    </div>
-</footer>
+<footer th:replace="~{fragment/footer :: footer}"></footer>
 
 <script>
     const estado = document.getElementById('estado-detalle');
