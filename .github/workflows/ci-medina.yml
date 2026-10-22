@@ -1,0 +1,31 @@
+name: Java CI - MedinaO
+
+on:
+  push:
+    branches: [ "dev_MedinaO" ]
+  pull_request:
+    branches: [ "dev_MedinaO" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Dar permisos de ejecución a Maven Wrapper
+        working-directory: ./backend
+        run: chmod +x mvnw
+
+      - name: Compilar proyecto con Maven
+        working-directory: ./backend
+        run: ./mvnw clean compile -DskipTests
