@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,28 +10,7 @@
     <link rel="stylesheet" href="../../../../../css/main.css"> </head>
 <body class="noticias-theme">
 
-<header class="app-header">
-    <div class="container header-flex">
-           <div class="logo">
-            <h1>Anime<span>News</span></h1>
-            <p>Lo último del anime y la cultura japonesa</p>
-        </div>
-   
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="noticias.html">Noticias</a></li>
-                <li><a href="estrenos.html">Estrenos</a></li>
-                <li><a href="anime.html" class="active">Anime</a></li>
-                <li><a href="manga.html">Manga</a></li>
-            </ul>
-        </nav>
-        <div class="search-box">
-            <input type="text" placeholder="Buscar...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
-    </div>
-</header>
+<header th:replace="~{fragment/navBar :: navBar('news', false)}"></header>
 
 <main class="container my-5 animate-fade-up">
     <div class="row g-4">
@@ -154,20 +133,7 @@
     </div>
 </main>
 
-<footer class="app-footer text-center py-4 border-top border-secondary mt-5" style="background-color: #0d0d0f;">
-    <div class="container d-flex justify-content-between align-items-center flex-wrap">
-        <div class="logo text-start">
-            <h2 class="h5 font-heading fw-bold text-white mb-0" style="font-family: 'Poppins';">Anime<span style="color: #ff3366;">News</span></h2>
-            <p class="text-muted small mb-0">© 2026 AnimeNews. Lo último del anime y la cultura japonesa.</p>
-        </div>
-        <div class="footer-links">
-            <a href="#" class="text-muted text-decoration-none me-3 small">Privacidad</a>
-            <a href="#" class="text-muted text-decoration-none me-3 small">Términos de Uso</a>
-            <a href="#" class="text-muted text-decoration-none me-3 small">Contacto</a>
-            <a href="#" class="text-muted text-decoration-none small">Publicidad</a>
-        </div>
-    </div>
-</footer>
+<footer th:replace="~{fragment/footer :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

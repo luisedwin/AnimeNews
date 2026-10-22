@@ -1,0 +1,65 @@
+<header class="app-header" th:fragment="navBar(activePage, mangaMode)">
+    <div class="container header-flex">
+        <div class="logo">
+            <h1>Anime<span>News</span></h1>
+            <p>Lo último del anime y la cultura japonesa</p>
+        </div>
+
+        <button th:if="${mangaMode}" class="mobile-nav-toggle d-lg-none" type="button"
+                data-bs-toggle="collapse" data-bs-target="#mangaHeaderMenu"
+                aria-controls="mangaHeaderMenu" aria-expanded="false"
+                aria-label="Abrir menú de navegación">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div th:if="${mangaMode}" class="header-menu collapse d-lg-flex" id="mangaHeaderMenu">
+            <nav class="main-nav" aria-label="Navegación principal">
+                <ul>
+                    <li><a href="index.html" th:href="@{/index.html}"
+                           th:classappend="${activePage == 'home'} ? 'active' : ''">Inicio</a></li>
+                    <li><a href="noticias.html" th:href="@{/noticias.html}"
+                           th:classappend="${activePage == 'news'} ? 'active' : ''">Noticias</a></li>
+                    <li><a href="estrenos.html" th:href="@{/estrenos.html}"
+                           th:classappend="${activePage == 'releases'} ? 'active' : ''">Estrenos</a></li>
+                    <li><a href="anime.html" th:href="@{/anime.html}"
+                           th:classappend="${activePage == 'anime'} ? 'active' : ''">Anime</a></li>
+                    <li><a href="manga.html" th:href="@{/manga}"
+                           th:classappend="${activePage == 'manga'} ? 'active' : ''"
+                           th:aria-current="${activePage == 'manga'} ? 'page' : null">Manga</a></li>
+                </ul>
+            </nav>
+            <form class="search-box" role="search" method="get">
+                <input type="search" name="q" placeholder="Buscar..." aria-label="Buscar">
+                <button type="submit" aria-label="Enviar búsqueda">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+
+        <th:block th:unless="${mangaMode}">
+            <nav class="main-nav" aria-label="Navegación principal">
+                <ul>
+                    <li><a href="index.html" th:href="@{/index.html}"
+                           th:classappend="${activePage == 'home'} ? 'active' : ''">Inicio</a></li>
+                    <li><a href="noticias.html" th:href="@{/noticias.html}"
+                           th:classappend="${activePage == 'news'} ? 'active' : ''">Noticias</a></li>
+                    <li><a href="estrenos.html" th:href="@{/estrenos.html}"
+                           th:classappend="${activePage == 'releases'} ? 'active' : ''">Estrenos</a></li>
+                    <li><a href="anime.html" th:href="@{/anime.html}"
+                           th:classappend="${activePage == 'anime'} ? 'active' : ''"
+                           th:aria-current="${activePage == 'anime'} ? 'page' : null">Anime</a></li>
+                    <li><a href="manga.html" th:href="@{/manga}"
+                           th:classappend="${activePage == 'manga'} ? 'active' : ''">Manga</a></li>
+                </ul>
+            </nav>
+            <div class="search-box">
+                <input type="text" placeholder="Buscar..." aria-label="Buscar">
+                <button type="button" aria-label="Buscar">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
+            </div>
+        </th:block>
+    </div>
+</header>

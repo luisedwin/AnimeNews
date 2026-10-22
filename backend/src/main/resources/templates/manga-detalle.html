@@ -12,40 +12,7 @@
     <link rel="stylesheet" href="/css/manga.css" th:href="@{/css/manga.css}">
 </head>
 <body class="manga-theme">
-<header class="app-header">
-    <div class="container header-flex">
-        <div class="logo">
-            <h1>Anime<span>News</span></h1>
-            <p>Lo último del anime y la cultura japonesa</p>
-        </div>
-
-        <button class="mobile-nav-toggle d-lg-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#mangaHeaderMenu" aria-controls="mangaHeaderMenu"
-                aria-expanded="false" aria-label="Abrir menú de navegación">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <div class="header-menu collapse d-lg-flex" id="mangaHeaderMenu">
-            <nav class="main-nav" aria-label="Navegación principal">
-                <ul>
-                    <li><a href="index.html" th:href="@{/index.html}">Inicio</a></li>
-                    <li><a href="noticias.html" th:href="@{/noticias.html}">Noticias</a></li>
-                    <li><a href="estrenos.html" th:href="@{/estrenos.html}">Estrenos</a></li>
-                    <li><a href="anime.html" th:href="@{/anime.html}">Anime</a></li>
-                    <li><a href="manga.html" class="active" th:href="@{/manga}" aria-current="page">Manga</a></li>
-                </ul>
-            </nav>
-            <form class="search-box" role="search" method="get">
-                <input type="search" name="q" placeholder="Buscar..." aria-label="Buscar">
-                <button type="submit" aria-label="Enviar búsqueda">
-                    <i class="fas fa-search" aria-hidden="true"></i>
-                </button>
-            </form>
-        </div>
-    </div>
-</header>
+<header th:replace="~{fragment/navBar :: navBar('manga', true)}"></header>
 
 <main class="container manga-detail-page">
     <article class="manga-detail">
@@ -155,6 +122,7 @@
         </p>
     </section>
 </main>
+<footer th:replace="~{fragment/footer :: footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.querySelectorAll(".manga-chapter-form").forEach((form) => {
