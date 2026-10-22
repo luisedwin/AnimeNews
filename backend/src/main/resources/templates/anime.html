@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime - AnimeNews</title>
+
+    <!-- Fuentes y librerías externas (CDN) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tu CSS local -->
+    <link rel="stylesheet" th:href="@{/css/anime.css}">
+</head>
+<body class="anime-theme">
+
+    <header th:replace="~{fragment/navBar :: navBar('anime')}"></header>
+
+    <!-- HERO -->
+    <section class="anime-hero animate-fade-up">
+        <div class="hero-bg" style="background-image: url('https://imgmedia.larepublica.pe/1000x590/larepublica/original/2022/06/19/62afabbd119a8801813a5692.webp');"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="hero-badge">DESTACADO</span>
+            <h1>Chainsaw Man: La Nueva Era del Shonen</h1>
+            <p>Tras una espera agónica, Denji regresa para revolucionar la industria del anime con una animación sin precedentes. Descubre por qué esta temporada está rompiendo todos los récords de audiencia global.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary-glow" onclick="abrirVideo('https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1')">
+                    <i class="fas fa-play"></i> Ver Ahora
+                </button>
+                <button class="btn-glass">Más Información</button>
+            </div>
+        </div>
+    </section>
+
+    <main class="container my-5 animate-fade-up" style="animation-delay: 0.2s;">
+        
+        <!-- Mensaje si no hay resultados de búsqueda -->
+        <div id="mensajeSinResultados" class="text-center py-5" style="display: none;">
+            <i class="fas fa-search mb-3" style="font-size: 3rem; color: var(--anime-primary);"></i>
+            <h3>No se encontraron animes</h3>
+            <p class="text-muted">Intenta con otro título.</p>
+        </div>
+
+        <!-- Bucle Principal: Recorre cada género que viene de la BD -->
+        <div th:each="genero : ${animesPorGenero}" class="content-section mb-5 seccion-genero">
+
+            <div class="section-header d-flex justify-content-between align-items-end mb-4">
+                <h2 th:text="${genero.key}">Género</h2>
+                <a href="#" class="view-all">Ver todo <i class="fas fa-chevron-right ms-1"></i></a>
+            </div>
+
+            <div class="crunchy-carousel">
+                
+                <!-- Bucle Secundario: Recorre los animes de ESTE género -->
+                <div class="crunchy-card" th:each="anime : ${genero.value}"
+                     th:data-video="${anime.videoUrl}" onclick="abrirVideoDesdeData(this)">
+
+                    <div class="crunchy-img-wrapper">
+                        <img th:src="${anime.imagenUrl}" th:alt="${anime.titulo}">
+
+                        <!-- BOTÓN DE FAVORITO -->
+                        <button class="btn-favorito" th:data-id="${anime.id}" th:data-titulo="${anime.titulo}" onclick="toggleFavorito(event, this)">
+                            <i class="far fa-heart"></i>
+                        </button>
+
+                        <div class="crunchy-overlay">
+                            <h3 class="titulo-anime" th:text="${anime.titulo}">Título</h3>
+                            <span class="crunchy-meta" th:text="'⭐ ' + ${anime.rating} + ' | Sub | Dob'">⭐ 4.9 | Sub | Dob</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+
+    <!-- MODAL PARA EL VIDEO -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark border border-secondary">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title text-white" id="videoModalLabel">Reproductor de Anime</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="cerrarVideo()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0 mt-3">
+                    <div class="ratio ratio-16x9">
+                        <iframe id="videoIframe" src="" title="Reproductor de video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPRODUCTOR DE MÚSICA FLOTANTE --- -->
+    <div class="music-player-widget">
+        <audio id="musicaFondo" loop>
+            <source th:src="@{/music/music.mp3}" type="audio/mpeg">
+        </audio>
+        <button id="btnMusica" class="music-toggle-btn">
+            <i class="fas fa-volume-mute"></i> <span>Activar</span>
+        </button>
+        <div class="volume-control">
+            <i class="fas fa-volume-down text-white text-opacity-75" style="font-size: 0.8rem;"></i>
+            <input type="range" id="volumenMusica" min="0" max="1" step="0.05" value="0.3" class="volume-slider">
+        </div>
+    </div>
+
+    <footer th:replace="~{fragment/footer :: footer}"></footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ==========================================
+        // 1. LÓGICA DEL MODAL DE VIDEO
+        // ==========================================
+        let miModalVideo = null;
+
+        function abrirVideo(url) {
+            const modalElement = document.getElementById('videoModal');
+            const videoIframe = document.getElementById('videoIframe');
+            videoIframe.src = url;
+            if (!miModalVideo) miModalVideo = new bootstrap.Modal(modalElement);
+            miModalVideo.show();
+        }
+
+        function abrirVideoDesdeData(elemento) {
+            const url = elemento.getAttribute('data-video');
+            if (url) abrirVideo(url);
+        }
+
+        function cerrarVideo() {
+            document.getElementById('videoIframe').src = "";
+            if (miModalVideo) miModalVideo.hide();
+        }
+
+        document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('videoIframe').src = "";
+        });
+
+        // ==========================================
+        // 2. LÓGICA DEL BUSCADOR
+        // ==========================================
+        document.getElementById('buscadorAnime').addEventListener('input', function(e) {
+            const texto = e.target.value.toLowerCase().trim();
+            const secciones = document.querySelectorAll('.seccion-genero');
+            let hayResultadosGlobales = false;
+
+            secciones.forEach(seccion => {
+                const tarjetas = seccion.querySelectorAll('.crunchy-card');
+                let hayResultadosEnSeccion = false;
+
+                tarjetas.forEach(tarjeta => {
+                    const titulo = tarjeta.querySelector('.titulo-anime').textContent.toLowerCase();
+                    // Si el título incluye el texto buscado, se muestra, sino se oculta
+                    if (titulo.includes(texto)) {
+                        tarjeta.style.display = 'block';
+                        hayResultadosEnSeccion = true;
+                        hayResultadosGlobales = true;
+                    } else {
+                        tarjeta.style.display = 'none';
+                    }
+                });
+
+                // Si no hay resultados en este género, ocultamos toda la sección
+                seccion.style.display = hayResultadosEnSeccion ? 'block' : 'none';
+            });
+
+            // Mostrar mensaje si no hay resultados
+            document.getElementById('mensajeSinResultados').style.display = hayResultadosGlobales ? 'none' : 'block';
+        });
+
+        // ==========================================
+        // 3. LÓGICA DE FAVORITOS (LocalStorage)
+        // ==========================================
+        // Cargar favoritos guardados al iniciar
+        let favoritos = JSON.parse(localStorage.getItem('favoritosAnime')) || [];
+
+        function toggleFavorito(event, btn) {
+            event.stopPropagation(); // Evita que se abra el video al dar clic en el corazón
+
+            const id = btn.getAttribute('data-id');
+            const icono = btn.querySelector('i');
+
+            if (favoritos.includes(id)) {
+                // Si ya es favorito, lo quitamos
+                favoritos = favoritos.filter(favId => favId !== id);
+                icono.classList.remove('fas', 'text-danger'); // Quitar relleno y color
+                icono.classList.add('far', 'text-white');    // Poner contorno y color blanco
+            } else {
+                // Si no es favorito, lo agregamos
+                favoritos.push(id);
+                icono.classList.remove('far', 'text-white');
+                icono.classList.add('fas', 'text-danger');
+            }
+
+            // Guardar en LocalStorage
+            localStorage.setItem('favoritosAnime', JSON.stringify(favoritos));
+        }
+
+        // Al cargar la página, pintar de rojo los corazones que ya eran favoritos
+        document.addEventListener('DOMContentLoaded', () => {
+            const botonesFavorito = document.querySelectorAll('.btn-favorito');
+            botonesFavorito.forEach(btn => {
+                const id = btn.getAttribute('data-id');
+                const icono = btn.querySelector('i');
+                if (favoritos.includes(id)) {
+                    icono.classList.remove('far', 'text-white');
+                    icono.classList.add('fas', 'text-danger');
+                }
+            });
+        });
+
+        // ==========================================
+        // 4. LÓGICA DE MÚSICA
+        // ==========================================
+        const audio = document.getElementById("musicaFondo");
+        const btnMusica = document.getElementById("btnMusica");
+        const sliderVolumen = document.getElementById("volumenMusica");
+        const spanTexto = btnMusica.querySelector("span");
+        const icono = btnMusica.querySelector("i");
+
+        let sonando = false;
+        audio.volume = sliderVolumen.value;
+
+        sliderVolumen.addEventListener("input", (e) => audio.volume = e.target.value);
+
+        audio.play().then(() => {
+            sonando = true;
+            icono.className = "fas fa-pause";
+            spanTexto.innerText = "Pausar";
+        }).catch((e) => console.log("Esperando interacción para la música."));
+
+        btnMusica.addEventListener("click", () => {
+            if (sonando) {
+                audio.pause();
+                icono.className = "fas fa-play";
+                spanTexto.innerText = "Reproducir";
+            } else {
+                audio.play();
+                icono.className = "fas fa-pause";
+                spanTexto.innerText = "Pausar";
+            }
+            sonando = !sonando;
+        });
+    </script>
+</body>
+</html>

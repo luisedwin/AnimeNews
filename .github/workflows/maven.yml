@@ -1,0 +1,25 @@
+
+name: AnimeNews - Spring Boot CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Compilar backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Compilar proyecto Spring Boot
+        run: mvn -B -f backend/pom.xml -DskipTests package

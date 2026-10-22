@@ -1,0 +1,31 @@
+<header class="app-header" th:fragment="navBar(activePage)">
+    <div class="container header-flex">
+        <div class="logo">
+            <h1>Anime<span>News</span></h1>
+            <p>Lo último del anime y la cultura japonesa</p>
+        </div>
+
+        <div class="header-menu d-flex">
+            <nav class="main-nav" aria-label="Navegación principal">
+                <ul>
+                    <li><a th:href="@{/}" th:classappend="${activePage == 'home'} ? 'active' : ''"
+                           th:aria-current="${activePage == 'home'} ? 'page' : null">Inicio</a></li>
+                    <li><a th:href="@{/noticias}" th:classappend="${activePage == 'news'} ? 'active' : ''"
+                           th:aria-current="${activePage == 'news'} ? 'page' : null">Noticias</a></li>
+                    <li><a th:href="@{/estrenos}" th:classappend="${activePage == 'releases'} ? 'active' : ''"
+                           th:aria-current="${activePage == 'releases'} ? 'page' : null">Estrenos</a></li>
+                    <li><a th:href="@{/anime}" th:classappend="${activePage == 'anime'} ? 'active' : ''"
+                           th:aria-current="${activePage == 'anime'} ? 'page' : null">Anime</a></li>
+                    <li><a th:href="@{/manga}" th:classappend="${activePage == 'manga'} ? 'active' : ''"
+                           th:aria-current="${activePage == 'manga'} ? 'page' : null">Manga</a></li>
+                </ul>
+            </nav>
+            <div th:if="${activePage == 'anime'}" class="search-box" role="search">
+                <input type="search" id="buscadorAnime" placeholder="Buscar anime..." aria-label="Buscar anime">
+                <button type="button" aria-label="Buscar anime">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
