@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de noticia - AnimeNews</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/main.css}" href="/css/main.css">
+    <style>
+        .detalle-hero {
+            position: relative;
+            min-height: clamp(340px, 55vw, 620px);
+            overflow: hidden;
+            border: 1px solid rgba(255, 51, 102, .3);
+            border-radius: 14px;
+            background: #18181b;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .5), 0 0 20px rgba(255, 51, 102, .1);
+        }
+        .detalle-hero-imagen {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .detalle-hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(13, 13, 15, .98), rgba(13, 13, 15, .12) 85%);
+        }
+        .detalle-hero-contenido {
+            position: absolute;
+            inset: auto 0 0;
+            padding: clamp(24px, 6vw, 56px);
+        }
+        .detalle-hero h1 {
+            max-width: 950px;
+            margin: 16px 0;
+            color: #fff;
+            font: 800 clamp(2rem, 5vw, 3.5rem)/1.15 'Poppins', sans-serif;
+        }
+        .detalle-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; color: #d4d4d8; }
+        .detalle-meta i { color: #ff3366; margin-right: 7px; }
+        .detalle-articulo {
+            background: #18181b;
+            border: 1px solid rgba(255,255,255,.06);
+            border-radius: 12px;
+            padding: clamp(24px, 5vw, 48px);
+        }
+        .detalle-resumen { color: #e4e4e7; font-size: 1.15rem; line-height: 1.8; border-left: 3px solid #ff3366; padding-left: 18px; }
+        .detalle-contenido { color: #c4c4cc; font-size: 1.05rem; line-height: 1.95; white-space: pre-line; overflow-wrap: anywhere; }
+        .detalle-volver { color: #ff6689; text-decoration: none; font-weight: 600; }
+        .detalle-volver:hover { color: #fff; }
+        [hidden] { display: none !important; }
+    </style>
+</head>
+<body class="noticias-theme">
+<header class="app-header">
+    <div class="container header-flex">
+        <div class="logo">
+            <h1>Anime<span>News</span></h1>
+            <p>Lo último del anime y la cultura japonesa</p>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/noticias" class="active">Noticias</a></li>
+                <li><a href="/estrenos.html">Estrenos</a></li>
+                <li><a href="/anime.html">Anime</a></li>
+                <li><a href="/manga.html">Manga</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="container my-5 animate-fade-up">
+    <a class="detalle-volver d-inline-block mb-4" href="/noticias"><i class="fas fa-arrow-left me-2"></i>Volver a noticias</a>
+    <p id="estado-detalle" class="text-muted" role="status">Cargando noticia...</p>
+
+    <article id="detalle-noticia" hidden>
+        <section class="detalle-hero mb-4">
+            <img class="detalle-hero-imagen" id="detalle-imagen" alt="">
+            <div class="detalle-hero-overlay"></div>
+            <div class="detalle-hero-contenido">
+                <span class="news-badge" id="detalle-categoria"></span>
+                <h1 id="detalle-titulo"></h1>
+                <div class="detalle-meta">
+                    <span id="detalle-anime"></span>
+                    <span id="detalle-autor"></span>
+                    <time id="detalle-fecha"></time>
+                </div>
+            </div>
+        </section>
+
+        <section class="detalle-articulo">
+            <p class="detalle-resumen" id="detalle-resumen"></p>
+            <div class="detalle-contenido mt-4" id="detalle-contenido"></div>
+        </section>
+    </article>
+</main>
+
+<footer class="app-footer text-center py-4 border-top border-secondary mt-5" style="background-color: #0d0d0f;">
+    <div class="container">
+        <p class="text-muted small mb-0">© 2026 AnimeNews. Lo último del anime y la cultura japonesa.</p>
+    </div>
+</footer>
+
+<script>
+    const estado = document.getElementById('estado-detalle');
+    const articulo = document.getElementById('detalle-noticia');
+    const idNoticia = window.location.pathname.split('/').filter(Boolean).pop();
+
+    function ponerTexto(id, valor, prefijo = '') {
+        const elemento = document.getElementById(id);
+        elemento.textContent = valor ? `${prefijo}${valor}` : '';
+        elemento.hidden = !valor;
+    }
+
+    function formatearFecha(fecha) {
+        if (!fecha) return '';
+        const fechaValida = new Date(fecha);
+        if (Number.isNaN(fechaValida.getTime())) return fecha;
+        return new Intl.DateTimeFormat('es', { dateStyle: 'long', timeStyle: 'short' }).format(fechaValida);
+    }
+
+    async function cargarDetalle() {
+        if (!idNoticia || !/^\d+$/.test(idNoticia)) {
+            estado.textContent = 'El identificador de la noticia no es válido.';
+            return;
+        }
+        try {
+            const respuesta = await fetch(`/api/noticias/${encodeURIComponent(idNoticia)}`, {
+                headers: { Accept: 'application/json' }
+            });
+            if (respuesta.status === 404) {
+                estado.textContent = 'No encontramos esa noticia.';
+                return;
+            }
+            if (!respuesta.ok) throw new Error(`Error HTTP ${respuesta.status}`);
+
+            const noticia = await respuesta.json();
+            document.title = `${noticia.titulo || 'Noticia'} - AnimeNews`;
+            ponerTexto('detalle-categoria', noticia.categoria || 'ANIME');
+            ponerTexto('detalle-titulo', noticia.titulo || 'Noticia sin título');
+            ponerTexto('detalle-resumen', noticia.resumen);
+            ponerTexto('detalle-contenido', noticia.contenido || noticia.resumen || 'Esta noticia todavía no tiene contenido.');
+            ponerTexto('detalle-anime', noticia.animeRelacionado, 'Anime: ');
+            ponerTexto('detalle-autor', noticia.autor, 'Por ');
+
+            const fecha = document.getElementById('detalle-fecha');
+            const fechaTexto = formatearFecha(noticia.fechaPublicacion);
+            fecha.textContent = fechaTexto ? ` ${fechaTexto}` : '';
+            fecha.hidden = !fechaTexto;
+            fecha.dateTime = noticia.fechaPublicacion || '';
+
+            const imagen = document.getElementById('detalle-imagen');
+            if (noticia.imagenUrl) {
+                imagen.src = noticia.imagenUrl;
+                imagen.alt = noticia.titulo ? `Imagen: ${noticia.titulo}` : 'Imagen de la noticia';
+            } else {
+                imagen.remove();
+            }
+
+            estado.hidden = true;
+            articulo.hidden = false;
+        } catch (error) {
+            console.error('No se pudo cargar la noticia:', error);
+            estado.textContent = 'No se pudo cargar la noticia. Intenta nuevamente más tarde.';
+        }
+    }
+
+    cargarDetalle();
+</script>
+</body>
+</html>

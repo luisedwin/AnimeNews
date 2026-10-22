@@ -1118,6 +1118,19 @@ body {
   transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
 }
 
+.noticia-card-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.noticia-card-link:focus-visible {
+  outline: 2px solid #ff3366;
+  outline-offset: -3px;
+  border-radius: 12px;
+}
+
 .news-standard-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
