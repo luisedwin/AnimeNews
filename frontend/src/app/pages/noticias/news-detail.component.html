@@ -1,0 +1,25 @@
+<main class="container my-5 animate-fade-up">
+  <a class="detalle-volver d-inline-block mb-4" routerLink="/noticias"><i class="fas fa-arrow-left me-2"></i>Volver a noticias</a>
+  <p *ngIf="loading()" class="text-muted" role="status">Cargando noticia...</p>
+  <p *ngIf="error()" class="alert alert-warning" role="alert">{{ error() }}</p>
+  <article *ngIf="noticia() as item">
+    <section class="detalle-hero mb-4">
+      <img *ngIf="item.imagenUrl" class="detalle-hero-imagen" [src]="item.imagenUrl" [alt]="'Imagen: ' + item.titulo">
+      <div class="detalle-hero-overlay"></div>
+      <div class="detalle-hero-contenido">
+        <span class="news-badge">{{ item.categoria || 'ANIME' }}</span>
+        <h1>{{ item.titulo }}</h1>
+        <div class="detalle-meta">
+          <span *ngIf="item.animeRelacionado"><i class="fas fa-tv"></i>Anime: {{ item.animeRelacionado }}</span>
+          <span *ngIf="item.autor"><i class="fas fa-user"></i>Por {{ item.autor }}</span>
+          <time *ngIf="item.fechaPublicacion" [attr.datetime]="item.fechaPublicacion">{{ item.fechaPublicacion | date:'long':'':'es' }}</time>
+        </div>
+      </div>
+    </section>
+    <section class="detalle-articulo">
+      <p *ngIf="item.resumen" class="detalle-resumen">{{ item.resumen }}</p>
+      <div class="detalle-contenido mt-4">{{ item.contenido || item.resumen || 'Esta noticia todavía no tiene contenido.' }}</div>
+    </section>
+  </article>
+</main>
+

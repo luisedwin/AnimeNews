@@ -1,39 +1,14 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ApiService } from './api.service';
-import { Noticia } from './models';
+import { ApiService } from '../../api.service';
+import { Noticia } from '../../models';
 
 @Component({
   selector: 'app-news-detail',
   standalone: true,
   imports: [CommonModule, DatePipe, RouterLink],
-  template: `
-    <main class="container my-5 animate-fade-up">
-      <a class="detalle-volver d-inline-block mb-4" routerLink="/noticias"><i class="fas fa-arrow-left me-2"></i>Volver a noticias</a>
-      <p *ngIf="loading()" class="text-muted" role="status">Cargando noticia...</p>
-      <p *ngIf="error()" class="alert alert-warning" role="alert">{{ error() }}</p>
-      <article *ngIf="noticia() as item">
-        <section class="detalle-hero mb-4">
-          <img *ngIf="item.imagenUrl" class="detalle-hero-imagen" [src]="item.imagenUrl" [alt]="'Imagen: ' + item.titulo">
-          <div class="detalle-hero-overlay"></div>
-          <div class="detalle-hero-contenido">
-            <span class="news-badge">{{ item.categoria || 'ANIME' }}</span>
-            <h1>{{ item.titulo }}</h1>
-            <div class="detalle-meta">
-              <span *ngIf="item.animeRelacionado"><i class="fas fa-tv"></i>Anime: {{ item.animeRelacionado }}</span>
-              <span *ngIf="item.autor"><i class="fas fa-user"></i>Por {{ item.autor }}</span>
-              <time *ngIf="item.fechaPublicacion" [attr.datetime]="item.fechaPublicacion">{{ item.fechaPublicacion | date:'long':'':'es' }}</time>
-            </div>
-          </div>
-        </section>
-        <section class="detalle-articulo">
-          <p *ngIf="item.resumen" class="detalle-resumen">{{ item.resumen }}</p>
-          <div class="detalle-contenido mt-4">{{ item.contenido || item.resumen || 'Esta noticia todavía no tiene contenido.' }}</div>
-        </section>
-      </article>
-    </main>
-  `,
+  templateUrl: './news-detail.component.html',
   styles: [`
     .detalle-hero{position:relative;min-height:clamp(340px,55vw,620px);overflow:hidden;border:1px solid rgba(255,51,102,.3);border-radius:14px;background:#18181b;box-shadow:0 10px 30px #0008,0 0 20px #ff33661a}
     .detalle-hero-imagen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}

@@ -3,82 +3,15 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ApiService } from './api.service';
-import { Anime } from './models';
-import { toYouTubeEmbedUrl } from './video-url';
+import { ApiService } from '../../api.service';
+import { Anime } from '../../models';
+import { toYouTubeEmbedUrl } from '../../video-url';
 
 @Component({
   selector: 'app-anime',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  template: `
-    <section class="anime-hero animate-fade-up">
-      <div class="hero-bg" style="background-image:url('https://imgmedia.larepublica.pe/1000x590/larepublica/original/2022/06/19/62afabbd119a8801813a5692.webp')"></div>
-      <div class="hero-overlay"></div>
-      <div class="container hero-content">
-        <span class="hero-badge">DESTACADO</span>
-        <h1>Chainsaw Man: La Nueva Era del Shonen</h1>
-        <p>Tras una espera agónica, Denji regresa para revolucionar la industria del anime con una animación sin precedentes. Descubre por qué esta temporada está rompiendo todos los récords de audiencia global.</p>
-        <div class="hero-buttons">
-          <button class="btn-primary-glow" type="button" (click)="openVideo('https://www.youtube.com/embed/dQw4w9WgXcQ')"><i class="fas fa-play"></i> Ver Ahora</button>
-          <a class="btn-glass btn-more-info" routerLink="/noticias">
-            <span>Más información</span>
-            <i class="fas fa-arrow-right" aria-hidden="true"></i>
-          </a>
-        </div>
-      </div>
-    </section>
-    <main class="container my-5 animate-fade-up">
-      <div class="d-flex justify-content-end mb-4">
-        <label class="search-box" role="search">
-          <input type="search" [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Buscar anime..." aria-label="Buscar anime">
-          <i class="fas fa-search" aria-hidden="true"></i>
-        </label>
-      </div>
-      <p *ngIf="loading()" class="text-muted" role="status">Cargando animes...</p>
-      <p *ngIf="error()" class="alert alert-warning" role="alert">{{ error() }}</p>
-      <p *ngIf="videoError()" class="alert alert-warning" role="alert">{{ videoError() }}</p>
-      <p *ngIf="!loading() && !error() && !filteredGroups().length" class="text-center py-5">
-        <i class="fas fa-search mb-3" style="font-size:3rem;color:var(--anime-primary)"></i>
-        <span class="d-block">No se encontraron animes</span>
-        <small class="text-muted">Intenta con otro título.</small>
-      </p>
-      <section class="content-section mb-5 seccion-genero" *ngFor="let group of filteredGroups(); trackBy: trackGroup">
-        <div class="section-header d-flex justify-content-between align-items-end mb-4"><h2>{{ group.genero }}</h2></div>
-        <div class="crunchy-carousel">
-          <article class="crunchy-card" *ngFor="let anime of group.animes; trackBy: trackAnime" (click)="openVideo(anime.videoUrl)">
-            <div class="crunchy-img-wrapper">
-              <img [src]="anime.imagenUrl || ''" [alt]="anime.titulo" loading="lazy">
-              <button class="btn-favorito" type="button" [attr.aria-label]="isFavorite(anime) ? 'Quitar de favoritos' : 'Agregar a favoritos'" (click)="$event.stopPropagation(); toggleFavorite(anime)">
-                <i [class]="isFavorite(anime) ? 'fas fa-heart text-danger' : 'far fa-heart text-white'"></i>
-              </button>
-              <div class="crunchy-overlay">
-                <h3 class="titulo-anime">{{ anime.titulo }}</h3>
-                <span class="crunchy-meta">⭐ {{ anime.rating ?? '—' }} | {{ anime.genero || 'Anime' }}</span>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-    </main>
-    <div class="video-backdrop" *ngIf="videoUrl()" (click)="closeVideo()" role="presentation">
-      <section class="video-dialog" role="dialog" aria-modal="true" aria-label="Reproductor de anime" (click)="$event.stopPropagation()">
-        <button class="btn-close btn-close-white ms-auto" type="button" (click)="closeVideo()" aria-label="Cerrar"></button>
-        <div class="ratio ratio-16x9"><iframe [src]="videoUrl()" title="Reproductor de video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
-      </section>
-    </div>
-    <div class="music-player-widget">
-      <audio #audioPlayer loop><source src="/music/music.mp3" type="audio/mpeg"></audio>
-      <button class="music-toggle-btn" type="button" (click)="toggleMusic(audioPlayer)">
-        <i [class]="musicPlaying() ? 'fas fa-pause' : 'fas fa-play'"></i>
-        <span>{{ musicPlaying() ? 'Pausar' : 'Activar' }}</span>
-      </button>
-      <div class="volume-control">
-        <i class="fas fa-volume-down text-white text-opacity-75"></i>
-        <input type="range" min="0" max="1" step="0.05" [value]="volume()" (input)="setVolume(audioPlayer, $event)" class="volume-slider" aria-label="Volumen">
-      </div>
-    </div>
-  `,
+  templateUrl: './anime.component.html',
   styles: [`
     .video-backdrop{position:fixed;inset:0;z-index:1100;display:grid;place-items:center;padding:1rem;background:#000c}
     .video-dialog{width:min(1100px,100%);padding:1rem;background:#18181b;border:1px solid #444;border-radius:12px}

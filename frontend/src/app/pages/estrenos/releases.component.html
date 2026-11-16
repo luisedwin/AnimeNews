@@ -1,0 +1,37 @@
+<main class="container my-5 animate-fade-up">
+  <div class="estrenos-header mb-4">
+    <h2 class="display-5 fw-bold font-heading text-white">Estrenos</h2>
+    <div class="subtitle-border"><p class="mb-0">Descubre los animes más esperados de la temporada.</p></div>
+  </div>
+  <div class="filter-bar d-flex flex-wrap align-items-center justify-content-between p-3 mb-5 rounded">
+    <div class="d-flex flex-wrap gap-3">
+      <select class="form-select bg-dark text-white border-secondary w-auto" [ngModel]="temporada()" (ngModelChange)="temporada.set($event)">
+        <option value="">Temporada: Todas</option><option>Primavera</option><option>Verano</option><option>Otoño</option><option>Invierno</option>
+      </select>
+      <select class="form-select bg-dark text-white border-secondary w-auto" [ngModel]="anio()" (ngModelChange)="anio.set($event)">
+        <option value="">Año: Todos</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option>
+      </select>
+      <select class="form-select bg-dark text-white border-secondary w-auto" [ngModel]="genero()" (ngModelChange)="genero.set($event)">
+        <option value="">Género: Todos</option><option>Shonen</option><option>Isekai</option><option>Seinen</option><option>Fantasy</option><option>Mecha</option>
+      </select>
+    </div>
+    <button class="btn btn-outline-light mt-3 mt-md-0" type="button" (click)="clearFilters()"><i class="fas fa-filter me-2"></i>Limpiar filtros</button>
+  </div>
+  <div class="cards-grid">
+    <article class="card dark-card" *ngFor="let estreno of filtered(); trackBy: trackEstreno">
+      <div class="card-img card-img-full position-relative" [style.background-image]="'url(' + estreno.imagen + ')'" style="height:400px">
+        <span class="custom-badge position-absolute top-0 start-0 m-3 shadow" *ngIf="estreno === estrenos[0]">🔥 DESTACADO</span>
+      </div>
+      <div class="card-content text-white">
+        <span class="card-category text-primary">{{ estreno.genero }}</span>
+        <h3 class="font-heading fs-5 mt-2 mb-0">{{ estreno.titulo }}</h3>
+      </div>
+      <div class="card-footer-custom">
+        <span class="text-muted small"><i class="far fa-calendar-alt me-1"></i>{{ estreno.temporada }} {{ estreno.anio }} · {{ estreno.dia }}</span>
+        <button class="bookmark-btn" type="button" [attr.aria-label]="'Guardar ' + estreno.titulo"><i class="far fa-bookmark"></i></button>
+      </div>
+    </article>
+  </div>
+  <p *ngIf="!filtered().length" class="text-muted text-center">No hay estrenos que coincidan con los filtros.</p>
+</main>
+

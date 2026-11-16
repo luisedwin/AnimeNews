@@ -1,0 +1,56 @@
+<main class="container manga-detail-page">
+  <a routerLink="/manga" class="d-inline-block my-4"><i class="fas fa-arrow-left me-2"></i>Volver a mangas</a>
+  <p *ngIf="loading()" class="text-muted" role="status">Cargando manga...</p>
+  <p *ngIf="error()" class="alert alert-warning" role="alert">{{ error() }}</p>
+  <ng-container *ngIf="manga() as item">
+    <article class="manga-detail">
+      <div class="manga-detail-cover"><img [src]="item.imageUrl || ''" [alt]="item.titulo" fetchpriority="high"></div>
+      <div class="manga-detail-content">
+        <span class="manga-badge">DETALLE DEL MANGA</span>
+        <h1>{{ item.titulo }}</h1>
+        <dl class="manga-detail-meta">
+          <div><dt>Autor</dt><dd>{{ item.autor || 'No especificado' }}</dd></div>
+          <div><dt>Género</dt><dd>{{ item.genero || 'No especificado' }}</dd></div>
+          <div><dt>ID</dt><dd>{{ item.id }}</dd></div>
+        </dl>
+        <section class="manga-detail-description"><h2>Sinopsis</h2><p>{{ item.descipcion || 'No hay una descripción disponible para este manga.' }}</p></section>
+      </div>
+    </article>
+
+    <section class="manga-chapters" aria-labelledby="chapters-heading">
+      <details class="manga-chapter-form-panel">
+        <summary>Agregar capítulo</summary>
+        <form class="manga-chapter-form" (submit)="saveChapter($event)">
+          <div class="manga-chapter-form-grid">
+            <label>Número del capítulo<input type="number" name="numero" min="1" step="1" required></label>
+            <label>Título<input type="text" name="titulo" maxlength="255" required></label>
+            <label>Fecha de publicación<input type="date" name="fechaPublicacion"></label>
+            <label>Archivo PDF (máximo 25 MB)<input type="file" name="archivoPdf" accept="application/pdf,.pdf" required></label>
+            <label class="manga-chapter-form-description">Descripción<textarea name="descripcion" rows="3" maxlength="5000"></textarea></label>
+          </div>
+          <div class="manga-chapter-form-actions">
+            <button type="submit" class="manga-chapter-read" [disabled]="saving()">Guardar capítulo</button>
+            <p class="manga-chapter-form-message" [class.is-error]="messageIsError()" role="status" aria-live="polite">{{ message() }}</p>
+          </div>
+        </form>
+      </details>
+      <div class="manga-chapters-heading">
+        <div><span class="manga-badge">LECTURA</span><h2 id="chapters-heading">Capítulos</h2></div>
+        <span class="manga-chapter-count">{{ chapterCount() }} capítulos</span>
+      </div>
+      <ol class="manga-chapter-list" *ngIf="capitulos().length">
+        <li class="manga-chapter-item" *ngFor="let capitulo of capitulos(); trackBy: trackCapitulo">
+          <div class="manga-chapter-number">Capítulo {{ capitulo.numero }}</div>
+          <div class="manga-chapter-info">
+            <h3>{{ capitulo.titulo }}</h3>
+            <p *ngIf="capitulo.descripcion">{{ capitulo.descripcion }}</p>
+            <time *ngIf="capitulo.fechaPublicacion" [attr.datetime]="capitulo.fechaPublicacion">{{ capitulo.fechaPublicacion }}</time>
+          </div>
+          <a *ngIf="capitulo.urlLectura" class="manga-chapter-read" [href]="capitulo.urlLectura" target="_blank" rel="noopener noreferrer" aria-label="Abrir capítulo para leer">Leer <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+        </li>
+      </ol>
+      <p class="manga-chapters-empty" *ngIf="!chaptersLoading() && !capitulos().length">Todavía no hay capítulos registrados para este manga.</p>
+    </section>
+  </ng-container>
+</main>
+
