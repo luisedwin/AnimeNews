@@ -1,9 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, throwError } from 'rxjs';
+import { environment } from '../environments/environment';
 import { Anime, Manga, MangaCapitulo, Noticia } from './models';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = environment.apiBaseUrl;
 
 const ANIMES: Anime[] = [
   {

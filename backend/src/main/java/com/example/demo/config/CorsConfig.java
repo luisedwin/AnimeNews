@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Configuration
 public class CorsConfig {
@@ -15,9 +16,12 @@ public class CorsConfig {
     @Bean
     public WebMvcConfigurer corsConfigurer(
             @Value("${app.cors.allowed-origins:http://localhost:4200}") String allowedOrigins) {
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+        List<String> origins = Stream.concat(
+                        Arrays.stream(allowedOrigins.split(",")),
+                        Stream.of("https://animenews-frontend.onrender.com"))
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
+                .distinct()
                 .toList();
 
         return new WebMvcConfigurer() {
