@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,23 +34,6 @@ public class MangaController {
     public MangaController(MangaService mangaService, MangaCapituloService capituloService) {
         this.mangaService = mangaService;
         this.capituloService = capituloService;
-    }
-
-    @GetMapping("/manga")
-    public String mostrarMangas(Model model) {
-        List<Manga> mangas = mangaService.obtenerTodos();
-        model.addAttribute("mangas", mangas);
-        model.addAttribute("mangaDestacado", mangaService.obtenerAleatorio(mangas).orElse(null));
-        return "manga";
-    }
-
-    @GetMapping("/manga/{id}")
-    public String mostrarDetalleManga(@PathVariable Long id, Model model) {
-        Manga manga = mangaService.obtenerPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Manga no encontrado"));
-        model.addAttribute("manga", manga);
-        model.addAttribute("capitulos", capituloService.obtenerPorManga(id));
-        return "manga-detalle";
     }
 
     @GetMapping("/api/mangas")

@@ -1,11 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.IndexService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import com.example.demo.model.Anime;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/animes")
 public class IndexController {
 
     private final IndexService indexService;
@@ -14,9 +18,8 @@ public class IndexController {
         this.indexService = indexService;
     }
 
-    @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("destacados", indexService.listarDestacados());
-        return "index";
+    @GetMapping("/destacados")
+    public List<Anime> listarDestacados() {
+        return indexService.listarDestacados();
     }
 }

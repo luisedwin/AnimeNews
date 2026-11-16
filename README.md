@@ -1,14 +1,15 @@
 ﻿# AnimeNews
 
-AnimeNews es un sitio web estático de noticias sobre anime, manga, estrenos y cultura japonesa. La idea principal del proyecto es simular la experiencia de un portal de entretenimiento moderno, con una interfaz visualmente llamativa, diseño responsivo y secciones especializadas para cada tipo de contenido.
+AnimeNews es un portal web de noticias sobre anime, manga, estrenos y cultura japonesa. El frontend está construido con Angular y se comunica con una API REST de Spring Boot; los datos se almacenan en PostgreSQL/Supabase.
 
 ## Novedades
 
-- Se Migro el proyecto al Springboot, donde las paginsa se manejaran en la parte de resources
+- El frontend se migró a Angular en `frontend/`.
+- Spring Boot sirve la SPA y expone la API REST bajo `/api`.
 - Se integro Supabase, una base de datos en la nube.
 - Los datos de la pagina se trasladaron a la base de datos y fueron inyectados a la pagina por sus respectivos enpoints.
 - Cada integrante configuro un workflow para el control de calidad de su rama respectiva.
-- Se creo un entorno de prueba con docker
+- Se creó un entorno de prueba con Docker.
 
 
 ## ¿En qué consiste la página?
@@ -21,7 +22,7 @@ La web está orientada a ser una landing page y un portal informativo para fans 
 - barras laterales con tendencias y contenido recomendado
 - un estilo visual inspirado en medios digitales de entretenimiento
 
-El proyecto está pensado como una demostración visual y de maquetación web, no como una aplicación con autenticación ni base de datos.
+El proyecto no incluye autenticación.
 
 ## ¿Qué se implementó?
 
@@ -46,6 +47,9 @@ Además, se aplicaron varios elementos visuales y de estilo:
 
 ## Tecnologías utilizadas
 
+- Angular
+- Java 21 y Spring Boot
+- PostgreSQL / Supabase
 - HTML5
 - CSS3
 - Bootstrap 5
@@ -55,33 +59,27 @@ Además, se aplicaron varios elementos visuales y de estilo:
 
 ## Estructura del proyecto
 
-- index.html — página de inicio
-- noticias.html — sección de noticias
-- Estrenos.html — sección de estrenos
-- anime.html — contenido sobre anime
-- manga.html — contenido sobre manga
-- css/ — carpeta con los estilos del sitio
-  - main.css — estilos principales del portal
-  - anime.css — estilos específicos para la sección de anime
-  - manga.css — estilos específicos para la sección de manga
-- music/ — recursos de audio del proyecto
+- `frontend/` — SPA Angular, páginas, rutas, cliente HTTP y proxy local.
+- `backend/` — API REST Spring Boot, persistencia y recursos compartidos (CSS/audio).
+- `docker-compose.yml` — aplicación y PostgreSQL para desarrollo/despliegue.
 
-## Cómo verlo localmente
+Angular usa señales para el estado y `computed` para filtros/listas derivados. Las páginas se cargan bajo demanda con rutas lazy-loaded, y los enlaces internos usan `routerLink` para navegar sin recargar la SPA.
 
-Puedes abrir cualquier archivo HTML directamente en el navegador o usar una extensión como Live Server en VS Code para visualizar el proyecto en un entorno más cómodo.
+## Cómo ejecutarlo en desarrollo
 
-Ejemplo:
+1. Configura `SPRING_DATASOURCE_PASSWORD` en el entorno. Para subir PDFs también configura `SUPABASE_SERVICE_ROLE_KEY`; no guardes estas credenciales en archivos versionados.
+2. Inicia el backend: `cd backend` y `.\mvnw.cmd spring-boot:run` (Windows) o `./mvnw spring-boot:run` (macOS/Linux).
+3. En otra terminal, inicia Angular: `cd frontend`, `npm ci` y `npm start`.
+4. Abre `http://localhost:4200`. El proxy de Angular conecta `/api`, `/css` y `/music` con Spring Boot en `http://localhost:8080`. El backend también permite CORS para `http://localhost:4200` en `/api/**`; para producción, establece `CORS_ALLOWED_ORIGINS` con el origen real de Angular. Puedes indicar varios orígenes separados por comas.
 
-1. Abrir la carpeta del proyecto en VS Code
-2. Ejecutar el archivo index.html o iniciar Live Server
-3. Navegar por las distintas secciones desde el menú principal
+Para construir y ejecutar la aplicación con Docker, usa `docker compose up --build` desde la raíz. El contenedor compila Angular y Spring Boot y sirve la SPA y la API desde el puerto 8080.
 
 ## Resumen
 
-AnimeNews es un mockup de portal de noticias de anime con diseño moderno, contenido simulado y varias secciones temáticas. Está enfocado en la presentación visual y la maquetación web, dejando la base para una futura evolución con contenido dinámico, noticias reales o integración con APIs.
+Las secciones de anime, noticias y manga consumen los endpoints del backend. Los estrenos siguen siendo contenido estático hasta que se incorpore su modelo y endpoint de datos.
 ## Gist:
 
-Luis M.: 
+Luis M.:
 
 1-https://gist.github.com/luisedwin/1dc91018ced90f4102e2158430b58535
 

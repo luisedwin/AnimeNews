@@ -1,0 +1,101 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 15px 0;
+  background: rgba(17, 17, 17, 0.9);
+  border-bottom: 1px solid rgba(230, 25, 53, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(15px);
+}
+
+.header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-menu {
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.logo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo h1 {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logo h1 span {
+  color: var(--anime-primary, #e61935);
+  text-shadow: 0 0 15px rgba(230, 25, 53, 0.4);
+}
+
+.logo p {
+  margin: 0;
+}
+
+.main-nav ul {
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.main-nav a {
+  position: relative;
+  color: #ccc;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.main-nav a::after {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--anime-primary, #e61935);
+  content: "";
+  transition: width 0.3s ease;
+}
+
+.main-nav a:hover::after,
+.main-nav a.active::after {
+  width: 100%;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+  color: white;
+}
+
+@media (max-width: 700px) {
+  .header-flex {
+    justify-content: center;
+  }
+
+  .header-menu {
+    justify-content: center;
+  }
+
+  .main-nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
+  }
+}

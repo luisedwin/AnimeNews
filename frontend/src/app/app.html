@@ -1,0 +1,36 @@
+<header class="app-header">
+  <div class="container header-flex">
+    <div class="logo">
+      <a routerLink="/" aria-label="AnimeNews, inicio">
+        <h1>Anime<span>News</span></h1>
+      </a>
+      <p>Lo último del anime y la cultura japonesa</p>
+    </div>
+    <div class="header-menu d-flex">
+      <nav class="main-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a></li>
+          <li><a routerLink="/noticias" routerLinkActive="active">Noticias</a></li>
+          <li><a routerLink="/estrenos" routerLinkActive="active">Estrenos</a></li>
+          <li><a routerLink="/anime" routerLinkActive="active">Anime</a></li>
+          <li><a routerLink="/manga" routerLinkActive="active">Manga</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<router-outlet></router-outlet>
+
+<footer class="app-footer">
+  <div class="container text-center">
+    <p>© 2026 AnimeNews. Lo último del anime y la cultura japonesa.</p>
+    <nav class="mt-2" aria-label="Navegación del pie de página">
+      <a routerLink="/">Inicio</a> |
+      <a routerLink="/noticias">Noticias</a> |
+      <a routerLink="/estrenos">Estrenos</a> |
+      <a routerLink="/anime">Anime</a> |
+      <a routerLink="/manga">Manga</a>
+    </nav>
+  </div>
+</footer>

@@ -2,6 +2,9 @@
 **/.git/
 **/.idea/
 **/.vscode/
+**/node_modules/
+**/dist/
+**/.angular/
 **/.DS_Store
 **/node_modules/
 Dockerfile
