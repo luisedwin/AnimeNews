@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from './api.service';
 import { Anime } from './models';
+import { toYouTubeEmbedUrl } from './video-url';
 
 @Component({
   selector: 'app-anime',
@@ -20,7 +21,10 @@ import { Anime } from './models';
         <p>Tras una espera agónica, Denji regresa para revolucionar la industria del anime con una animación sin precedentes. Descubre por qué esta temporada está rompiendo todos los récords de audiencia global.</p>
         <div class="hero-buttons">
           <button class="btn-primary-glow" type="button" (click)="openVideo('https://www.youtube.com/embed/dQw4w9WgXcQ')"><i class="fas fa-play"></i> Ver Ahora</button>
-          <a class="btn-glass" routerLink="/noticias">Más Información</a>
+          <a class="btn-glass btn-more-info" routerLink="/noticias">
+            <span>Más información</span>
+            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
         </div>
       </div>
     </section>
@@ -81,6 +85,12 @@ import { Anime } from './models';
     .video-dialog .btn-close{display:block;margin-bottom:1rem}
     .search-box{display:flex;align-items:center;gap:.5rem}
     .search-box input{min-width:220px}
+    .hero-buttons .btn-more-info{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:50px;padding:12px 24px;border:1px solid rgba(255,255,255,.38);border-radius:50px;color:#fff;font-size:.98rem;font-weight:700;line-height:1;text-decoration:none;background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.06));box-shadow:0 6px 20px rgba(0,0,0,.24);transition:transform .25s ease,border-color .25s ease,background .25s ease,box-shadow .25s ease}
+    .hero-buttons .btn-more-info i{display:grid;width:27px;height:27px;place-items:center;border-radius:50%;background:rgba(255,255,255,.17);font-size:.75rem;transition:transform .25s ease,background .25s ease}
+    .hero-buttons .btn-more-info:hover{color:#fff;border-color:#ff4d6d;background:linear-gradient(135deg,rgba(255,51,102,.38),rgba(255,255,255,.12));box-shadow:0 9px 26px rgba(255,51,102,.25);transform:translateY(-3px)}
+    .hero-buttons .btn-more-info:hover i{background:#ff3366;transform:translateX(3px)}
+    .hero-buttons .btn-more-info:focus-visible{outline:3px solid #fff;outline-offset:4px}
+    @media (max-width:480px){.hero-buttons .btn-more-info{padding:11px 18px;font-size:.92rem}}
   `],
 })
 export class AnimeComponent implements OnInit {
@@ -155,20 +165,15 @@ export class AnimeComponent implements OnInit {
       this.videoError.set('Este anime no tiene un video disponible.');
       return;
     }
-    try {
-      const parsed = new URL(url);
-      const hostsPermitidos = ['www.youtube.com', 'youtube.com', 'www.youtube-nocookie.com'];
-      if (parsed.protocol === 'https:' && hostsPermitidos.includes(parsed.hostname) && parsed.pathname.startsWith('/embed/')) {
-        this.videoUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(parsed.toString()));
-        this.videoError.set('');
-        return;
-      }
-    } catch {
+    const embedUrl = toYouTubeEmbedUrl(url);
+    if (!embedUrl) {
+      this.videoUrl.set(null);
       this.videoError.set('El enlace del video no es válido o no está permitido.');
       return;
     }
-    this.videoUrl.set(null);
-    this.videoError.set('El enlace del video no es válido o no está permitido.');
+
+    this.videoUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl));
+    this.videoError.set('');
   }
 
   closeVideo(): void {

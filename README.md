@@ -77,6 +77,8 @@ Para construir y ejecutar la aplicación con Docker, usa `docker compose up --bu
 ## Resumen
 
 Las secciones de anime, noticias y manga consumen los endpoints del backend. Los estrenos siguen siendo contenido estático hasta que se incorpore su modelo y endpoint de datos.
+
+Al iniciar Spring Boot se corrigen, si hace falta, los enlaces de tráiler guardados para Blue Period, Spy x Family, Kaguya-sama, Horimiya, Clannad: After Story y K-On!.
 ## Gist:
 
 Luis M.:
