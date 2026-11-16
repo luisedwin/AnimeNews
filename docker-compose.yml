@@ -9,30 +9,12 @@ services:
     environment:
       SERVER_PORT: 8080
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/anime_news
-      SPRING_DATASOURCE_USERNAME: anime
-      SPRING_DATASOURCE_PASSWORD: anime
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres.lcayyvbprhhtehmqsphn}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:?Configura SPRING_DATASOURCE_PASSWORD en el entorno}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
       SUPABASE_URL: ${SUPABASE_URL:-}
       SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
       SUPABASE_STORAGE_BUCKET: ${SUPABASE_STORAGE_BUCKET:-manga-capitulos}
-    depends_on:
-      - db
     restart: unless-stopped
-
-  db:
-    image: postgres:16-alpine
-    container_name: animenews-db
-    environment:
-      POSTGRES_DB: anime_news
-      POSTGRES_USER: anime
-      POSTGRES_PASSWORD: anime
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-
-volumes:
-  postgres_data:

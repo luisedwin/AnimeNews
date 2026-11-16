@@ -61,7 +61,7 @@ Además, se aplicaron varios elementos visuales y de estilo:
 
 - `frontend/` — SPA Angular, páginas, rutas, cliente HTTP y proxy local.
 - `backend/` — API REST Spring Boot, persistencia y recursos compartidos (CSS/audio).
-- `docker-compose.yml` — aplicación y PostgreSQL para desarrollo/despliegue.
+- `docker-compose.yml` — aplicación conectada a PostgreSQL en Supabase.
 
 Angular usa señales para el estado y `computed` para filtros/listas derivados. Las páginas se cargan bajo demanda con rutas lazy-loaded, y los enlaces internos usan `routerLink` para navegar sin recargar la SPA.
 
@@ -72,7 +72,7 @@ Angular usa señales para el estado y `computed` para filtros/listas derivados. 
 3. En otra terminal, inicia Angular: `cd frontend`, `npm ci` y `npm start`.
 4. Abre `http://localhost:4200`. El proxy de Angular conecta `/api`, `/css` y `/music` con Spring Boot en `http://localhost:8080`. El backend también permite CORS para `http://localhost:4200` en `/api/**`; para producción, establece `CORS_ALLOWED_ORIGINS` con el origen real de Angular. Puedes indicar varios orígenes separados por comas.
 
-Para construir y ejecutar la aplicación con Docker, usa `docker compose up --build` desde la raíz. El contenedor compila Angular y Spring Boot y sirve la SPA y la API desde el puerto 8080.
+Para construir y ejecutar la aplicación con Docker, configura `SPRING_DATASOURCE_PASSWORD` en el entorno antes de usar `docker compose up --build` desde la raíz (en PowerShell: `$env:SPRING_DATASOURCE_PASSWORD = "tu-contraseña"`). Compose conecta Spring Boot a la misma base PostgreSQL de Supabase que `application.properties`; no inicia una base de datos local. El usuario y la URL pueden personalizarse con `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_URL`. Para subir PDFs también configura `SUPABASE_SERVICE_ROLE_KEY`. No guardes estas credenciales en archivos versionados. El contenedor compila Angular y Spring Boot y sirve la SPA y la API desde el puerto 8080.
 
 ## Resumen
 
