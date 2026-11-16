@@ -75,7 +75,7 @@ export class MangaDetailComponent implements OnInit {
   readonly chaptersLoading = signal(true);
   readonly error = signal('');
   readonly saving = signal(false);
-  readonly message = signal('El PDF se guardará en Supabase Storage.');
+  readonly message = signal('Si el backend no está disponible, los cambios solo se guardarán durante esta sesión.');
   readonly messageIsError = signal(false);
   readonly chapterCount = computed(() => this.capitulos().length);
 
