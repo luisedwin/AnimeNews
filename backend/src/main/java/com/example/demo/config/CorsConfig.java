@@ -18,7 +18,7 @@ public class CorsConfig {
             @Value("${app.cors.allowed-origins:http://localhost:4200}") String allowedOrigins) {
         List<String> origins = Stream.concat(
                         Arrays.stream(allowedOrigins.split(",")),
-                        Stream.of("https://animenews-frontend.onrender.com"))
+                        Stream.of("https://frontend-h33e.onrender.com"))
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
                 .distinct()
