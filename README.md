@@ -5,7 +5,7 @@ AnimeNews es un portal web de noticias sobre anime, manga, estrenos y cultura ja
 ## Novedades
 
 - El frontend se migró a Angular en `frontend/`.
-- Spring Boot sirve la SPA y expone la API REST bajo `/api`.
+- Angular y Spring Boot son aplicaciones independientes: Angular sirve la interfaz y Spring Boot expone únicamente la API REST bajo `/api`.
 - Se integro Supabase, una base de datos en la nube.
 - Los datos de la pagina se trasladaron a la base de datos y fueron inyectados a la pagina por sus respectivos enpoints.
 - Cada integrante configuro un workflow para el control de calidad de su rama respectiva.
@@ -60,8 +60,9 @@ Además, se aplicaron varios elementos visuales y de estilo:
 ## Estructura del proyecto
 
 - `frontend/` — SPA Angular, páginas, rutas, cliente HTTP y proxy local.
-- `backend/` — API REST Spring Boot, persistencia y recursos compartidos (CSS/audio).
-- `docker-compose.yml` — aplicación conectada a PostgreSQL en Supabase.
+- `backend/` — API REST Spring Boot y persistencia.
+- `frontend/` — SPA Angular y sus recursos estáticos (CSS/audio).
+- `docker-compose.yml` — servicios frontend y backend independientes; el backend se conecta a PostgreSQL en Supabase.
 
 Angular usa señales para el estado y `computed` para filtros/listas derivados. Las páginas se cargan bajo demanda con rutas lazy-loaded, y los enlaces internos usan `routerLink` para navegar sin recargar la SPA.
 
@@ -70,9 +71,9 @@ Angular usa señales para el estado y `computed` para filtros/listas derivados. 
 1. Configura `SPRING_DATASOURCE_PASSWORD` en el entorno. Para subir PDFs también configura `SUPABASE_SERVICE_ROLE_KEY`; no guardes estas credenciales en archivos versionados.
 2. Inicia el backend: `cd backend` y `.\mvnw.cmd spring-boot:run` (Windows) o `./mvnw spring-boot:run` (macOS/Linux).
 3. En otra terminal, inicia Angular: `cd frontend`, `npm ci` y `npm start`.
-4. Abre `http://localhost:4200`. El proxy de Angular conecta `/api`, `/css` y `/music` con Spring Boot en `http://localhost:8080`. El backend también permite CORS para `http://localhost:4200` en `/api/**`; para producción, establece `CORS_ALLOWED_ORIGINS` con el origen real de Angular. Puedes indicar varios orígenes separados por comas.
+4. Abre `http://localhost:4200`. El navegador llama directamente a `http://localhost:8080/api`; Spring Boot permite CORS para `http://localhost:4200` por defecto. Para otros despliegues, establece `CORS_ALLOWED_ORIGINS` en el backend con el origen real del frontend. Puedes indicar varios orígenes separados por comas. CSS y audio se sirven desde el propio frontend.
 
-Para construir y ejecutar la aplicación con Docker, configura `SPRING_DATASOURCE_PASSWORD` en el entorno antes de usar `docker compose up --build` desde la raíz (en PowerShell: `$env:SPRING_DATASOURCE_PASSWORD = "tu-contraseña"`). Compose conecta Spring Boot a la misma base PostgreSQL de Supabase que `application.properties`; no inicia una base de datos local. El usuario y la URL pueden personalizarse con `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_URL`. Para subir PDFs también configura `SUPABASE_SERVICE_ROLE_KEY`. No guardes estas credenciales en archivos versionados. El contenedor compila Angular y Spring Boot y sirve la SPA y la API desde el puerto 8080.
+Para construir y ejecutar ambos servicios independientes con Docker, configura `SPRING_DATASOURCE_PASSWORD` antes de usar `docker compose up --build` desde la raíz (en PowerShell: `$env:SPRING_DATASOURCE_PASSWORD = "tu-contraseña"`). El frontend queda en `http://localhost:4200` y el backend API en `http://localhost:8080`. Angular recibe `API_BASE_URL` al arrancar el contenedor frontend; el valor predeterminado para este entorno local es `http://localhost:8080/api`. Configura `CORS_ALLOWED_ORIGINS` con el origen del frontend cuando cambie. Compose conecta Spring Boot a PostgreSQL de Supabase; no inicia una base local. El usuario y la URL pueden personalizarse con `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_URL`. Para subir PDFs también configura `SUPABASE_SERVICE_ROLE_KEY`. No guardes credenciales en archivos versionados.
 
 ## Resumen
 

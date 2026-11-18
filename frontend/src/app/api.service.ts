@@ -4,7 +4,7 @@ import { Observable, catchError, of, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Anime, Manga, MangaCapitulo, Noticia } from './models';
 
-const API_BASE_URL = environment.apiBaseUrl;
+const API_BASE_URL = window.__APP_CONFIG__?.apiBaseUrl || environment.apiBaseUrl;
 
 const ANIMES: Anime[] = [
   {
