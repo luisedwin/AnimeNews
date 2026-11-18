@@ -14,7 +14,7 @@ public class CorsConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer(
-            @Value("${app.cors.allowed-origins:http://localhost:4200,https://animenews-frontend.onrender.com}") String allowedOrigins) {
+            @Value("${app.cors.allowed-origins:http://localhost:4200,https://frontend-h33e.onrender.com}") String allowedOrigins) {
         List<String> origins = Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
