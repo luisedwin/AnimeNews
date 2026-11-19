@@ -77,7 +77,7 @@ Para construir y ejecutar ambos servicios independientes con Docker, configura `
 
 ## Kubernetes con Docker Desktop
 
-El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend` (Spring Boot) y `frontend` (Angular servido por Nginx). Nginx reenvía `/api` al backend dentro del mismo Pod. El Service publica el frontend en `http://localhost:30080`. PostgreSQL/Supabase continúa siendo una base de datos externa; Kubernetes no crea una base de datos local. Las imágenes se almacenan en un registry local de Docker Desktop, sin publicarlas en Docker Hub o GHCR.
+El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend` (Spring Boot) y `frontend` (Angular servido por Nginx). Nginx reenvía `/api` al backend dentro del mismo Pod. El Service es `NodePort` en el puerto `30080`; en este clúster kind de Docker Desktop el NodePort no queda accesible automáticamente desde Windows, así que se usa `kubectl port-forward`. PostgreSQL/Supabase continúa siendo una base de datos externa; Kubernetes no crea una base de datos local. Las imágenes se almacenan en un registry local de Docker Desktop, sin publicarlas en Docker Hub o GHCR.
 
 ### Desplegar la aplicación
 
@@ -112,10 +112,12 @@ El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend`
    ```powershell
    docker exec $node sh -c 'mkdir -p /etc/containerd/certs.d/localhost:5001'
 
-   @'
-   [host."http://animenews-registry:5000"]
-     capabilities = ["pull", "resolve"]
-   '@ | docker exec -i $node sh -c 'cat > /etc/containerd/certs.d/localhost:5001/hosts.toml'
+   $hostsToml = @(
+     '[host."http://animenews-registry:5000"]'
+     '  capabilities = ["pull", "resolve"]'
+   )
+   $hostsToml | docker exec -i $node sh -c 'cat > /etc/containerd/certs.d/localhost:5001/hosts.toml'
+   docker exec $node cat /etc/containerd/certs.d/localhost:5001/hosts.toml
    ```
 
    Esta configuración es del nodo de Docker Desktop y puede perderse al restablecer o recrear el clúster. La configuración sigue el patrón de la [guía de registry local de kind](https://kind.sigs.k8s.io/docs/user/local-registry/).
@@ -137,19 +139,24 @@ El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend`
    ```powershell
    $env:SPRING_DATASOURCE_URL = Read-Host "JDBC URL de PostgreSQL/Supabase"
    $env:SPRING_DATASOURCE_USERNAME = Read-Host "Usuario de PostgreSQL/Supabase"
+   if ($env:SPRING_DATASOURCE_URL -notmatch '^jdbc:postgresql://[^/]+/.+') { throw "La URL debe tener el formato jdbc:postgresql://host/base-de-datos." }
+   if ([string]::IsNullOrWhiteSpace($env:SPRING_DATASOURCE_USERNAME)) { throw "El usuario no puede estar vacío." }
    $securePassword = Read-Host "Contraseña de PostgreSQL/Supabase" -AsSecureString
+   if ($securePassword.Length -eq 0) { throw "La contraseña no puede estar vacía." }
    $passwordPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePassword)
    try {
      $env:SPRING_DATASOURCE_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($passwordPointer)
    } finally {
      [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPointer)
    }
+   if ([string]::IsNullOrWhiteSpace($env:SPRING_DATASOURCE_PASSWORD)) { throw "La contraseña no puede estar vacía." }
 
    kubectl create secret generic animenews-secrets `
      --from-literal="SPRING_DATASOURCE_URL=$env:SPRING_DATASOURCE_URL" `
      --from-literal="SPRING_DATASOURCE_USERNAME=$env:SPRING_DATASOURCE_USERNAME" `
      --from-literal="SPRING_DATASOURCE_PASSWORD=$env:SPRING_DATASOURCE_PASSWORD" `
      --dry-run=client -o yaml | kubectl apply -f -
+   if ($LASTEXITCODE -ne 0) { throw "No se pudo crear o actualizar el Secret." }
 
    Remove-Item Env:SPRING_DATASOURCE_URL, Env:SPRING_DATASOURCE_USERNAME, Env:SPRING_DATASOURCE_PASSWORD
    ```
@@ -163,7 +170,15 @@ El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend`
    kubectl get pods,services
    ```
 
-8. Abre `http://localhost:30080`. Para revisar los registros de cada contenedor:
+8. En una segunda terminal de PowerShell, inicia el reenvío del Service y déjalo ejecutándose:
+
+   ```powershell
+   kubectl port-forward service/animenews 30080:80
+   ```
+
+   Mientras ese comando siga activo, abre `http://localhost:30080`. Si el puerto `30080` ya está ocupado, usa `kubectl port-forward service/animenews 8081:80` y abre `http://localhost:8081`. Para detener el reenvío, presiona `Ctrl+C`.
+
+   Para revisar los registros de cada contenedor:
 
    ```powershell
    kubectl logs deployment/animenews -c backend
