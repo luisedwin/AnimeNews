@@ -75,6 +75,78 @@ Angular usa señales para el estado y `computed` para filtros/listas derivados. 
 
 Para construir y ejecutar ambos servicios independientes con Docker, configura `SPRING_DATASOURCE_PASSWORD` antes de usar `docker compose up --build` desde la raíz (en PowerShell: `$env:SPRING_DATASOURCE_PASSWORD = "tu-contraseña"`). El frontend queda en `http://localhost:4200` y el backend API en `http://localhost:8080`. Angular recibe `API_BASE_URL` al arrancar el contenedor frontend; el valor predeterminado para este entorno local es `http://localhost:8080/api`. Configura `CORS_ALLOWED_ORIGINS` con el origen del frontend cuando cambie. Compose conecta Spring Boot a PostgreSQL de Supabase; no inicia una base local. El usuario y la URL pueden personalizarse con `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_URL`. Para subir PDFs también configura `SUPABASE_SERVICE_ROLE_KEY`. No guardes credenciales en archivos versionados.
 
+## Kubernetes con Docker Desktop
+
+El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend` (Spring Boot) y `frontend` (Angular servido por Nginx). Nginx reenvía `/api` al backend dentro del mismo Pod. El Service publica el frontend en `http://localhost:30080`. PostgreSQL/Supabase continúa siendo una base de datos externa; Kubernetes no crea una base de datos local.
+
+### Desplegar la aplicación
+
+1. En Docker Desktop, abre **Settings > Kubernetes**, activa Kubernetes y selecciona **Apply & Restart**. Espera a que aparezca como iniciado.
+2. Desde PowerShell, en la raíz del repositorio, selecciona el contexto local y comprueba que el nodo esté listo:
+
+   ```powershell
+   kubectl config use-context docker-desktop
+   kubectl get nodes
+   ```
+
+3. Construye las imágenes con las rutas de compilación que usa el repositorio:
+
+   ```powershell
+   docker build -t animenews-backend:local -f backend/Dockerfile .
+   docker build -t animenews-frontend:local -f frontend/Dockerfile .\frontend
+   ```
+
+4. Crea el Secret de Kubernetes con la conexión a PostgreSQL/Supabase. Introduce los valores en PowerShell; la contraseña se solicita sin mostrarla. El Secret no queda escrito en `k8s.yml` ni en el repositorio:
+
+   ```powershell
+   $env:SPRING_DATASOURCE_URL = Read-Host "JDBC URL de PostgreSQL/Supabase"
+   $env:SPRING_DATASOURCE_USERNAME = Read-Host "Usuario de PostgreSQL/Supabase"
+   $securePassword = Read-Host "Contraseña de PostgreSQL/Supabase" -AsSecureString
+   $passwordPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePassword)
+   try {
+     $env:SPRING_DATASOURCE_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($passwordPointer)
+   } finally {
+     [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPointer)
+   }
+
+   kubectl create secret generic animenews-secrets `
+     --from-literal="SPRING_DATASOURCE_URL=$env:SPRING_DATASOURCE_URL" `
+     --from-literal="SPRING_DATASOURCE_USERNAME=$env:SPRING_DATASOURCE_USERNAME" `
+     --from-literal="SPRING_DATASOURCE_PASSWORD=$env:SPRING_DATASOURCE_PASSWORD" `
+     --dry-run=client -o yaml | kubectl apply -f -
+
+   Remove-Item Env:SPRING_DATASOURCE_URL, Env:SPRING_DATASOURCE_USERNAME, Env:SPRING_DATASOURCE_PASSWORD
+   ```
+
+   El Secret se crea o actualiza. Si también necesitas subir PDFs, agrega `SUPABASE_SERVICE_ROLE_KEY` como otra opción `--from-literal` y define esa variable de entorno antes de ejecutar el comando. No pegues la clave directamente en el README ni en el manifiesto.
+5. Aplica el manifiesto y espera a que el Pod esté listo:
+
+   ```powershell
+   kubectl apply -f .\k8s.yml
+   kubectl rollout status deployment/animenews --timeout=180s
+   kubectl get pods,services
+   ```
+
+6. Abre `http://localhost:30080`. Para revisar los registros de cada contenedor:
+
+   ```powershell
+   kubectl logs deployment/animenews -c backend
+   kubectl logs deployment/animenews -c frontend
+   ```
+
+Cuando cambies el código, vuelve a construir la imagen correspondiente y reinicia el Deployment:
+
+```powershell
+docker build -t animenews-backend:local -f backend/Dockerfile .
+docker build -t animenews-frontend:local -f frontend/Dockerfile .\frontend
+kubectl rollout restart deployment/animenews
+kubectl rollout status deployment/animenews --timeout=180s
+```
+
+Para eliminar los recursos de Kubernetes, ejecuta `kubectl delete -f .\k8s.yml`. El Secret se conserva; elimínalo por separado con `kubectl delete secret animenews-secrets` si ya no lo necesitas.
+
+Aunque sea un proyecto universitario, las credenciales reales no deben guardarse en archivos versionados: un repositorio puede copiarse o hacerse público. Si una clave real ya se subió al repositorio, rótala en Supabase; eliminarla del archivo no la borra del historial de Git.
+
 ## Resumen
 
 Las secciones de anime, noticias y manga consumen los endpoints del backend. Los estrenos siguen siendo contenido estático hasta que se incorpore su modelo y endpoint de datos.
