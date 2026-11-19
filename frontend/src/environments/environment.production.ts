@@ -1,3 +1,3 @@
 export const environment = {
-  apiBaseUrl: 'https://backend-ciu5.onrender.com/api',
+  apiBaseUrl: 'https://animenews-backend-c1j3.onrender.com/api',
 };

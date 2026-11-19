@@ -7,7 +7,7 @@ services:
       - "8080:8080"
     environment:
       SERVER_PORT: 8080
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200,https://animenews-frontend-ge8q.onrender.com}
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres.lcayyvbprhhtehmqsphn}
       SPRING_DATASOURCE_PASSWORD: "cCTwDNUXNVtxPaHO"
@@ -25,5 +25,5 @@ services:
     ports:
       - "4200:80"
     environment:
-      API_BASE_URL: ${API_BASE_URL:-http://localhost:8080/api}
+      API_BASE_URL: ${API_BASE_URL:-https://animenews-backend-c1j3.onrender.com/api}
     restart: unless-stopped
