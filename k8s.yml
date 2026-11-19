@@ -47,8 +47,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: animenews-backend:local
-          imagePullPolicy: Never
+          image: localhost:5001/animenews-backend:local
+          imagePullPolicy: Always
           ports:
             - name: backend-http
               containerPort: 8080
@@ -106,8 +106,8 @@ spec:
               cpu: "1"
               memory: 1Gi
         - name: frontend
-          image: animenews-frontend:local
-          imagePullPolicy: Never
+          image: localhost:5001/animenews-frontend:local
+          imagePullPolicy: Always
           ports:
             - name: frontend-http
               containerPort: 80

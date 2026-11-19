@@ -77,26 +77,62 @@ Para construir y ejecutar ambos servicios independientes con Docker, configura `
 
 ## Kubernetes con Docker Desktop
 
-El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend` (Spring Boot) y `frontend` (Angular servido por Nginx). Nginx reenvía `/api` al backend dentro del mismo Pod. El Service publica el frontend en `http://localhost:30080`. PostgreSQL/Supabase continúa siendo una base de datos externa; Kubernetes no crea una base de datos local.
+El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend` (Spring Boot) y `frontend` (Angular servido por Nginx). Nginx reenvía `/api` al backend dentro del mismo Pod. El Service publica el frontend en `http://localhost:30080`. PostgreSQL/Supabase continúa siendo una base de datos externa; Kubernetes no crea una base de datos local. Las imágenes se almacenan en un registry local de Docker Desktop, sin publicarlas en Docker Hub o GHCR.
 
 ### Desplegar la aplicación
 
-1. En Docker Desktop, abre **Settings > Kubernetes**, activa Kubernetes y selecciona **Apply & Restart**. Espera a que aparezca como iniciado.
-2. Desde PowerShell, en la raíz del repositorio, selecciona el contexto local y comprueba que el nodo esté listo:
+1. En Docker Desktop, abre la vista **Kubernetes**, activa Kubernetes y espera a que el clúster aparezca como iniciado. En esa vista, activa **Show system containers (advanced)** para poder configurar el nodo.
+2. Desde PowerShell, en la raíz del repositorio, selecciona el contexto local y comprueba que el nodo esté listo y visible en Docker:
 
    ```powershell
    kubectl config use-context docker-desktop
    kubectl get nodes
+   $node = docker ps --format '{{.Names}}' | Where-Object { $_ -like '*desktop-control-plane*' } | Select-Object -First 1
+   if (-not $node) { throw "No aparece el contenedor del nodo. Activa Show system containers (advanced) en Docker Desktop." }
+   docker exec $node sh -c 'grep -n "config_path" /etc/containerd/config.toml'
    ```
 
-3. Construye las imágenes con las rutas de compilación que usa el repositorio:
+   El último comando debe mostrar una configuración que apunte a `/etc/containerd/certs.d`. Si no muestra esa ruta, detente: el nodo no está configurado para leer el alias del registry y hay que revisar el clúster antes de continuar.
+
+3. Inicia un registry local en la red `kind`. El puerto queda limitado a tu computadora; el volumen conserva las imágenes si se elimina y vuelve a crear el contenedor:
+
+   ```powershell
+   docker run -d --restart=always --name animenews-registry `
+     --network kind `
+     -p 127.0.0.1:5001:5000 `
+     -v animenews-registry-data:/var/lib/registry `
+     registry:3
+   curl.exe http://localhost:5001/v2/
+   ```
+
+   La respuesta de `curl.exe` debería ser `{}`. Si ya existe el contenedor `animenews-registry`, no vuelvas a ejecutar `docker run`.
+
+4. Configura el nodo para que containerd resuelva `localhost:5001` hacia el registry local:
+
+   ```powershell
+   docker exec $node sh -c 'mkdir -p /etc/containerd/certs.d/localhost:5001'
+
+   @'
+   [host."http://animenews-registry:5000"]
+     capabilities = ["pull", "resolve"]
+   '@ | docker exec -i $node sh -c 'cat > /etc/containerd/certs.d/localhost:5001/hosts.toml'
+   ```
+
+   Esta configuración es del nodo de Docker Desktop y puede perderse al restablecer o recrear el clúster. La configuración sigue el patrón de la [guía de registry local de kind](https://kind.sigs.k8s.io/docs/user/local-registry/).
+
+5. Construye las imágenes, etiquétalas con la dirección del registry local y súbelas:
 
    ```powershell
    docker build -t animenews-backend:local -f backend/Dockerfile .
    docker build -t animenews-frontend:local -f frontend/Dockerfile .\frontend
+
+   docker tag animenews-backend:local localhost:5001/animenews-backend:local
+   docker push localhost:5001/animenews-backend:local
+   docker tag animenews-frontend:local localhost:5001/animenews-frontend:local
+   docker push localhost:5001/animenews-frontend:local
    ```
 
-4. Crea el Secret de Kubernetes con la conexión a PostgreSQL/Supabase. Introduce los valores en PowerShell; la contraseña se solicita sin mostrarla. El Secret no queda escrito en `k8s.yml` ni en el repositorio:
+6. Crea el Secret de Kubernetes con la conexión a PostgreSQL/Supabase. Introduce los valores en PowerShell; la contraseña se solicita sin mostrarla. El Secret no queda escrito en `k8s.yml` ni en el repositorio:
 
    ```powershell
    $env:SPRING_DATASOURCE_URL = Read-Host "JDBC URL de PostgreSQL/Supabase"
@@ -119,7 +155,7 @@ El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend`
    ```
 
    El Secret se crea o actualiza. Si también necesitas subir PDFs, agrega `SUPABASE_SERVICE_ROLE_KEY` como otra opción `--from-literal` y define esa variable de entorno antes de ejecutar el comando. No pegues la clave directamente en el README ni en el manifiesto.
-5. Aplica el manifiesto y espera a que el Pod esté listo:
+7. Aplica el manifiesto y espera a que el Pod esté listo:
 
    ```powershell
    kubectl apply -f .\k8s.yml
@@ -127,23 +163,29 @@ El manifiesto [`k8s.yml`](./k8s.yml) crea un Pod con dos contenedores: `backend`
    kubectl get pods,services
    ```
 
-6. Abre `http://localhost:30080`. Para revisar los registros de cada contenedor:
+8. Abre `http://localhost:30080`. Para revisar los registros de cada contenedor:
 
    ```powershell
    kubectl logs deployment/animenews -c backend
    kubectl logs deployment/animenews -c frontend
    ```
 
-Cuando cambies el código, vuelve a construir la imagen correspondiente y reinicia el Deployment:
+Cuando cambies el código, vuelve a construir, etiquetar y subir la imagen correspondiente, y reinicia el Deployment para que Kubernetes la descargue:
 
 ```powershell
 docker build -t animenews-backend:local -f backend/Dockerfile .
+docker tag animenews-backend:local localhost:5001/animenews-backend:local
+docker push localhost:5001/animenews-backend:local
+
 docker build -t animenews-frontend:local -f frontend/Dockerfile .\frontend
+docker tag animenews-frontend:local localhost:5001/animenews-frontend:local
+docker push localhost:5001/animenews-frontend:local
+
 kubectl rollout restart deployment/animenews
 kubectl rollout status deployment/animenews --timeout=180s
 ```
 
-Para eliminar los recursos de Kubernetes, ejecuta `kubectl delete -f .\k8s.yml`. El Secret se conserva; elimínalo por separado con `kubectl delete secret animenews-secrets` si ya no lo necesitas.
+Para eliminar los recursos de Kubernetes, ejecuta `kubectl delete -f .\k8s.yml`. El Secret y el registry local se conservan; elimínalos por separado si ya no los necesitas.
 
 Aunque sea un proyecto universitario, las credenciales reales no deben guardarse en archivos versionados: un repositorio puede copiarse o hacerse público. Si una clave real ya se subió al repositorio, rótala en Supabase; eliminarla del archivo no la borra del historial de Git.
 
